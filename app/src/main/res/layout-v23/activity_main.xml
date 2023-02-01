@@ -14,7 +14,7 @@
         android:layout_marginStart="2dp"
         android:text="@string/app_name"
         android:textColor="@color/white"
-        android:textSize="@dimen/text_size_main_activity" />
+        android:textSize="22sp" />
 
 
     <Button
@@ -31,7 +31,7 @@
         android:text="@string/search"
         android:textColor="@color/text_color"
 
-        android:textSize="@dimen/text_size_main_activity"
+        android:textSize="22sp"
         app:backgroundTint="@color/white"
         app:cornerRadius="16dp"
         app:elevation="0dp"
@@ -41,16 +41,17 @@
         app:iconTint="@color/black"
         app:textAllCaps="false"
 
-        android:letterSpacing="@dimen/letter_spacing"/>
+        android:letterSpacing="0"/>
 
     <Button
+        android:foreground="?attr/selectableItemBackground"
         android:id="@+id/button2"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginStart="3dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="1dp"
-        android:textSize="@dimen/text_size_main_activity"
+        android:textSize="22sp"
         android:layout_weight="1"
         android:insetTop="0dp"
         android:insetBottom="0dp"
@@ -65,7 +66,7 @@
         app:iconTint="@color/black"
         app:textAllCaps="false"
 
-        android:letterSpacing="@dimen/letter_spacing"/>
+        android:letterSpacing="0"/>
 
     <Button
         android:id="@+id/button3"
@@ -80,7 +81,7 @@
         android:insetBottom="0dp"
         android:text="@string/settings"
         android:textColor="@color/text_color"
-        android:textSize="@dimen/text_size_main_activity"
+        android:textSize="22sp"
         app:backgroundTint="@color/white"
         app:cornerRadius="16dp"
         app:icon="@drawable/ic_settings"
@@ -89,6 +90,9 @@
         app:iconTint="@color/black"
         app:textAllCaps="false"
 
-        android:letterSpacing="@dimen/letter_spacing"/>
+
+        android:letterSpacing="0"/>
+
+
 
 </LinearLayout>
