@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="text_size_main_activity" translatable="false">22sp</dimen>
+    <dimen name="text_size_settings_activity" translatable="false">16sp</dimen>
+    <dimen name="letter_spacing" translatable="false">0</dimen>
+    <dimen name="layout_height" translatable="false">56dp</dimen>
+</resources>
