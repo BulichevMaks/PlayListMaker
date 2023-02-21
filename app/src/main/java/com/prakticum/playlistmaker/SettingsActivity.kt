@@ -1,6 +1,8 @@
 package com.prakticum.playlistmaker
 
 import android.annotation.SuppressLint
+import android.app.ActivityManager
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -25,7 +27,7 @@ class SettingsActivity : AppCompatActivity() {
             finish()
         }
         buttonShare.setOnClickListener {
-            val message = "https://practicum.yandex.ru/profile/android-developer/"
+            val message = getString(R.string.course_link)
             val sendIntent: Intent = Intent().apply {
                this.action = Intent.ACTION_SEND
                 this.putExtra(Intent.EXTRA_TEXT, message)
@@ -36,16 +38,16 @@ class SettingsActivity : AppCompatActivity() {
             startActivity(shareIntent)
         }
         buttonSupport.setOnClickListener {
-            val message = "Спасибо разработчикам и разработчицам за крутое приложение!"
+            val message = getString(R.string.message_email)
             val shareIntent = Intent(Intent.ACTION_SENDTO)
             shareIntent.data = Uri.parse("mailto:")
-            shareIntent.putExtra(Intent.EXTRA_SUBJECT,"Сообщение разработчикам и разработчицам приложения Playlist Maker")
-            shareIntent.putExtra(Intent.EXTRA_EMAIL, arrayOf("maxbulmail@yandex.ru"))
+            shareIntent.putExtra(Intent.EXTRA_SUBJECT,getString(R.string.message_theme))
+            shareIntent.putExtra(Intent.EXTRA_EMAIL, arrayOf(getString(R.string.email)))
             shareIntent.putExtra(Intent.EXTRA_TEXT, message)
             startActivity(shareIntent)
         }
         buttonUserAgreement.setOnClickListener {
-            val url = Uri.parse("https://yandex.ru/legal/practicum_offer/")
+            val url = Uri.parse(getString(R.string.practicum_offer_link))
             val intent = Intent(Intent.ACTION_VIEW, url)
             startActivity(intent)
         }
