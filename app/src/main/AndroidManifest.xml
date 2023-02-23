@@ -18,6 +18,7 @@
             android:exported="false" />
         <activity
             android:name=".SearchActivity"
+            android:theme="@style/Theme.Settings"
             android:exported="false" />
         <activity
             android:name=".SettingsActivity"

@@ -5,10 +5,11 @@
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SearchActivity"
     android:orientation="vertical"
     android:paddingStart="16dp"
-    android:paddingEnd="16dp">
+    android:paddingEnd="16dp"
+    tools:context=".SearchActivity">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/layout_height"
@@ -29,28 +30,31 @@
             android:textSize="@dimen/text_size_main_activity" />
 
     </LinearLayout>
+
     <FrameLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        >
+        android:theme="@style/Search">
+
         <EditText
             android:id="@+id/inputEditText"
             android:layout_width="fill_parent"
             android:layout_height="36dp"
-            android:background="@drawable/et_style"
-            android:drawableStart="@drawable/ic_search"
+            android:background="@android:color/transparent"
+            android:textColor="@color/black"
+            android:drawablePadding="9dp"
             android:hint="@string/search"
             android:inputType="text"
-            android:textColor="@color/black"
-            android:textColorHint="@color/black" />
+            android:paddingStart="13dp"/>
 
         <ImageView
             android:id="@+id/clearIcon"
+            android:theme="@style/Clear"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="right|center_vertical"
-            android:src="@android:drawable/ic_menu_close_clear_cancel"
-            android:visibility="gone"
-            />
+            android:paddingEnd="12dp"
+            android:src="@drawable/ic_clear"
+            android:visibility="gone"/>
     </FrameLayout>
 </LinearLayout>

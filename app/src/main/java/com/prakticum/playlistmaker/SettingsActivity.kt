@@ -8,6 +8,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 
@@ -18,18 +19,19 @@ class SettingsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
 
-        val buttonBack = findViewById<ImageView>(R.id.buttonBack)
-        val buttonShare = findViewById<TextView>(R.id.share)
-        val buttonSupport = findViewById<TextView>(R.id.support)
-        val buttonUserAgreement = findViewById<TextView>(R.id.user_agreement)
+        val buttonBack = findViewById<LinearLayout>(R.id.buttonBack)
+        val buttonShare = findViewById<LinearLayout>(R.id.share)
+        val buttonSupport = findViewById<LinearLayout>(R.id.support)
+        val buttonUserAgreement = findViewById<LinearLayout>(R.id.user_agreement)
 
         buttonBack.setOnClickListener {
             finish()
         }
+
         buttonShare.setOnClickListener {
             val message = getString(R.string.course_link)
             val sendIntent: Intent = Intent().apply {
-               this.action = Intent.ACTION_SEND
+                this.action = Intent.ACTION_SEND
                 this.putExtra(Intent.EXTRA_TEXT, message)
                 this.type = "text/plain"
             }
@@ -37,18 +39,22 @@ class SettingsActivity : AppCompatActivity() {
             val shareIntent = Intent.createChooser(sendIntent, null)
             startActivity(shareIntent)
         }
+
         buttonSupport.setOnClickListener {
             val message = getString(R.string.message_email)
-            val shareIntent = Intent(Intent.ACTION_SENDTO)
-            shareIntent.data = Uri.parse("mailto:")
-            shareIntent.putExtra(Intent.EXTRA_SUBJECT,getString(R.string.message_theme))
-            shareIntent.putExtra(Intent.EXTRA_EMAIL, arrayOf(getString(R.string.email)))
-            shareIntent.putExtra(Intent.EXTRA_TEXT, message)
+            val shareIntent = Intent().apply {
+                this.action = Intent.ACTION_SENDTO
+                this.data = Uri.parse("mailto:")
+                this.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.message_theme))
+                this.putExtra(Intent.EXTRA_EMAIL, arrayOf(getString(R.string.email)))
+                this.putExtra(Intent.EXTRA_TEXT, message)
+            }
             startActivity(shareIntent)
         }
+
         buttonUserAgreement.setOnClickListener {
-            val url = Uri.parse(getString(R.string.practicum_offer_link))
-            val intent = Intent(Intent.ACTION_VIEW, url)
+            val uri = Uri.parse(getString(R.string.practicum_offer_link))
+            val intent = Intent(Intent.ACTION_VIEW, uri)
             startActivity(intent)
         }
 

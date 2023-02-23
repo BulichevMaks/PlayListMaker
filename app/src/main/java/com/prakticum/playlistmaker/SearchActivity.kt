@@ -13,7 +13,7 @@ class SearchActivity : AppCompatActivity() {
         const val TEXT_CONTENTS = "TEXT_CONTENTS"
     }
 
-    var input = ""
+    private var input = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
@@ -22,10 +22,6 @@ class SearchActivity : AppCompatActivity() {
         val inputEditText = findViewById<EditText>(R.id.inputEditText)
         val clearButton = findViewById<ImageView>(R.id.clearIcon)
         val buttonBack = findViewById<ImageView>(R.id.buttonBack)
-
-        if (savedInstanceState != null) {
-            inputEditText.setText(savedInstanceState.getString(TEXT_CONTENTS, ""))
-        }
 
         clearButton.setOnClickListener {
             inputEditText.setText("")
@@ -69,5 +65,10 @@ class SearchActivity : AppCompatActivity() {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putString(TEXT_CONTENTS, input)
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        input = savedInstanceState.getString(TEXT_CONTENTS,"")
     }
 }
