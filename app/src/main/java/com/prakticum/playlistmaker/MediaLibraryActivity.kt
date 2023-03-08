@@ -50,14 +50,9 @@ class MediaLibraryActivity : AppCompatActivity() {
 }
 class NewsViewHolder(parentView: View) : RecyclerView.ViewHolder(parentView) {
 
-    private val sourceName: TextView
-    private val text: TextView
+    private val sourceName: TextView = parentView.findViewById(R.id.sourceName)
+    private val text: TextView = parentView.findViewById(R.id.text)
 
-    init {
-      //  val itemView = LayoutInflater.from(parentView.context).inflate(R.layout.activity_media_library, parentView, false)
-        sourceName = parentView.findViewById(R.id.sourceName)
-        text = parentView.findViewById(R.id.text)
-    }
     fun bind(model: News) {
         // присваиваем в TextView значения из нашей модели
         sourceName.text = model.name

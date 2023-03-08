@@ -23,7 +23,7 @@ class TrackViewHolder(private val item: View) : RecyclerView.ViewHolder(item) {
             .load(model.artworkUrl100)
             .placeholder(R.drawable.hamster)
             .centerCrop()
-            .transform(RoundedCorners(2))
+            .transform(RoundedCorners(itemView.resources.getDimensionPixelSize(R.dimen.track_icon_radius)))
             .into(tvTrackImageScr)
     }
 }
