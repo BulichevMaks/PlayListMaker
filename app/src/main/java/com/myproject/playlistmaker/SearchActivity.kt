@@ -1,6 +1,7 @@
 package com.myproject.playlistmaker
 
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.content.res.Configuration
 import android.os.Bundle
@@ -22,6 +23,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -54,7 +56,7 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var errorMessage: String
     private var image = R.drawable.error_not_found_dark
     private var tracks: ArrayList<Track> = ArrayList()
-    var historyTracks: ArrayList<Track> = ArrayList()
+    private var historyTracks: ArrayList<Track> = ArrayList()
     private val trackAdapter = TrackAdapter(tracks)
     private var historyAdapter = HistoryAdapter(historyTracks)
 
@@ -68,6 +70,7 @@ class SearchActivity : AppCompatActivity() {
         const val STATE_BUTTON_VISIBILITY = "STATE_BUTTON_VISIBILITY"
         const val ERROR_MESSAGE = "ERROR_MESSAGE"
         const val IMAGE = "IMAGE"
+        const val SEL_ITEM = "SEL_ITEM"
     }
 
 
@@ -139,7 +142,7 @@ class SearchActivity : AppCompatActivity() {
 
 
         trackAdapter.setOnItemClickListener { position ->
-
+            startIntent(position, tracks)
             val items = historyTracks
 
             if (!items.contains(tracks[position])) {
@@ -155,6 +158,9 @@ class SearchActivity : AppCompatActivity() {
             }
         }
 
+        historyAdapter.setOnItemClickListener {position ->
+            startIntent(position, historyTracks)
+        }
 
         val searchTextWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
@@ -172,8 +178,6 @@ class SearchActivity : AppCompatActivity() {
             }
         }
         inputEditText.addTextChangedListener(searchTextWatcher)
-
-
     }
 
     override fun onStop() {
@@ -181,7 +185,22 @@ class SearchActivity : AppCompatActivity() {
         val sharedPreferences = getSharedPreferences(PREFERENCES, MODE_PRIVATE)
         writeToPref(sharedPreferences, historyTracks)
     }
-
+    private fun startIntent(position: Int, tracks: ArrayList<Track>) {
+        val selectedItem = tracks[position]
+        val intent = Intent(this, PlayerViewActivity::class.java)
+        intent.putExtra(SEL_ITEM, selectedItem.artworkUrl100)
+        intent.putExtra("trackName", selectedItem.trackName)
+        intent.putExtra("artistName",selectedItem.artistName)
+        intent.putExtra("duration",selectedItem.trackTimeMillis?.let {
+            SimpleDateFormat("mm:ss", Locale.getDefault()).format(it.toLong())
+        }.toString()
+        )
+        intent.putExtra("collectionName",selectedItem.collectionName)
+        intent.putExtra("releaseDate",selectedItem.releaseDate)
+        intent.putExtra("primaryGenreName",selectedItem.primaryGenreName)
+        intent.putExtra("country",selectedItem.country)
+        startActivity(intent)
+    }
     fun showHistory(context: Context, s: CharSequence?) {
         if (inputEditText.hasFocus() && s?.isEmpty() == true && historyTracks.isNotEmpty()
         ) {
