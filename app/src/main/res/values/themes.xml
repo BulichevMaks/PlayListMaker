@@ -45,6 +45,13 @@
         <item name="android:fontFamily">@font/ys_display_regular</item>
         <item name="android:textColor">#AEAFB4</item>
     </style>
+    <style name="TextPlayerMain">
+        <item name="android:textSize">22sp</item>
+        <item name="android:fontFamily">@font/ys_display_medium</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:maxLines">1</item>
+    </style>
     <style name="TextPlayer">
         <item name="android:textSize">13sp</item>
         <item name="android:fontFamily">@font/ys_display_regular</item>

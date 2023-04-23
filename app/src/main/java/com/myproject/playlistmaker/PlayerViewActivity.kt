@@ -12,6 +12,7 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.google.android.material.internal.ViewUtils.dpToPx
 import com.google.gson.Gson
 import com.myproject.playlistmaker.SearchActivity.Companion.SEL_ITEM
+import com.myproject.playlistmaker.SearchActivity.Companion.SEL_ITEM_URL
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.roundToInt
@@ -27,9 +28,6 @@ class PlayerViewActivity : AppCompatActivity() {
     private lateinit var releaseDate: TextView
     private lateinit var primaryGenreName: TextView
     private lateinit var country: TextView
-
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.player_view)
@@ -44,36 +42,34 @@ class PlayerViewActivity : AppCompatActivity() {
         primaryGenreName = findViewById(R.id.primaryGenreName)
         country = findViewById(R.id.country)
 
-        trackName.text = intent.getStringExtra("trackName")
-        artistName.text = intent.getStringExtra("artistName")
-        duration.text = intent.getStringExtra("duration")
-        collectionName.text = intent.getStringExtra("collectionName")
+        val track = intent.getSerializableExtra(SEL_ITEM) as Track
+        trackName.text = track.trackName
+        artistName.text = track.artistName
+        duration.text = track.trackTimeMillis?.let {
+            SimpleDateFormat("mm:ss", Locale.getDefault()).format(it.toLong())
+        }.toString()
+        collectionName.text = track.collectionName
 
         val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US)
-        val date = intent.getStringExtra("releaseDate")?.let { dateFormat.parse(it) }
+        val date = track.releaseDate.let { dateFormat.parse(it) }
         val calendar = Calendar.getInstance().apply {
             if (date != null) {
                 time = date
             }
         }
         releaseDate.text = calendar.get(Calendar.YEAR).toString()
-        primaryGenreName.text = intent.getStringExtra("primaryGenreName")
-        country.text = intent.getStringExtra("country")
+        primaryGenreName.text = track.primaryGenreName
+        country.text = track.country
 
         Glide.with(this)
-            .load(intent.getStringExtra(SEL_ITEM)?.replaceAfterLast('/',"512x512bb.jpg")!!)
+            .load(intent.getStringExtra(SEL_ITEM_URL)?.replaceAfterLast('/',"512x512bb.jpg")!!)
             .placeholder(R.drawable.plaseholder_player)
             .error(R.drawable.plaseholder_player)
-            .transform(RoundedCorners(dpToPx(8))) // как правильно указать значение вот тут?
+            .transform(RoundedCorners(resources.getDimensionPixelSize(R.dimen.padding_top_bottom)))
             .into(imageAlbum)
 
         buttonBack.setOnClickListener {
             finish()
         }
     }
-}
-
-fun dpToPx(dp: Int): Int {
-    val density = Resources.getSystem().displayMetrics.density
-    return (dp * density).roundToInt()
 }

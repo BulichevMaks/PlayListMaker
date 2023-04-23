@@ -10,4 +10,5 @@
     <dimen name="padding_start_end" translatable="false">16dp</dimen>
     <dimen name="padding_top_bottom" translatable="false">8dp</dimen>
     <dimen name="marginTop" translatable="false">17dp</dimen>
+    <dimen name="marginBottom" translatable="false">28dp</dimen>
 </resources>

@@ -70,6 +70,7 @@ class SearchActivity : AppCompatActivity() {
         const val STATE_BUTTON_VISIBILITY = "STATE_BUTTON_VISIBILITY"
         const val ERROR_MESSAGE = "ERROR_MESSAGE"
         const val IMAGE = "IMAGE"
+        const val SEL_ITEM_URL = "SEL_ITEM_URL"
         const val SEL_ITEM = "SEL_ITEM"
     }
 
@@ -128,7 +129,7 @@ class SearchActivity : AppCompatActivity() {
             false
         }
         inputEditText.setOnFocusChangeListener { view, hasFocus ->
-            showHistory(context, "")
+            showHistory("")
         }
         buttonRefresh.setOnClickListener {
             search()
@@ -170,7 +171,7 @@ class SearchActivity : AppCompatActivity() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 input = s.toString()
                 clearButton.visibility = clearButtonVisibility(s)
-                showHistory(context, s)
+                showHistory(s)
             }
 
             override fun afterTextChanged(s: Editable?) {
@@ -188,20 +189,11 @@ class SearchActivity : AppCompatActivity() {
     private fun startIntent(position: Int, tracks: ArrayList<Track>) {
         val selectedItem = tracks[position]
         val intent = Intent(this, PlayerViewActivity::class.java)
-        intent.putExtra(SEL_ITEM, selectedItem.artworkUrl100)
-        intent.putExtra("trackName", selectedItem.trackName)
-        intent.putExtra("artistName",selectedItem.artistName)
-        intent.putExtra("duration",selectedItem.trackTimeMillis?.let {
-            SimpleDateFormat("mm:ss", Locale.getDefault()).format(it.toLong())
-        }.toString()
-        )
-        intent.putExtra("collectionName",selectedItem.collectionName)
-        intent.putExtra("releaseDate",selectedItem.releaseDate)
-        intent.putExtra("primaryGenreName",selectedItem.primaryGenreName)
-        intent.putExtra("country",selectedItem.country)
+        intent.putExtra(SEL_ITEM_URL, selectedItem.artworkUrl100)
+        intent.putExtra(SEL_ITEM, selectedItem)
         startActivity(intent)
     }
-    fun showHistory(context: Context, s: CharSequence?) {
+    fun showHistory(s: CharSequence?) {
         if (inputEditText.hasFocus() && s?.isEmpty() == true && historyTracks.isNotEmpty()
         ) {
             placeholder.visibility = View.GONE
