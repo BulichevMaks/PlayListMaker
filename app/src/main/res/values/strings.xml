@@ -20,5 +20,10 @@
         Загрузка не удалась. Проверьте\n
         подключение к интернету</string>
     <string name="refresh">Обновить</string>
+    <string name="duration">Длительность</string>
+    <string name="album">Альбом</string>
+    <string name="year">Год</string>
+    <string name="genre">Жанр</string>
+    <string name="country">Страна</string>
 
 </resources>

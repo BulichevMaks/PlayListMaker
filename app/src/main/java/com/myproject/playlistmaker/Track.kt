@@ -4,12 +4,12 @@ import java.io.Serializable
 
 data class Track(
     val id: Int,
-    val trackName: String, // Название композиции
-    val artistName: String, // Имя исполнителя
-    val trackTimeMillis: String?, // Продолжительность трека
-    val artworkUrl100: String, // Ссылка на изображение обложки
-    val collectionName: String, // Ссылка на изображение обложки
-    val releaseDate: String, // Ссылка на изображение обложки
-    val primaryGenreName: String, // Ссылка на изображение обложки
-    val country: String, // Ссылка на изображение обложки
+    val trackName: String,
+    val artistName: String,
+    val trackTimeMillis: String?,
+    val artworkUrl100: String,
+    val collectionName: String,
+    val releaseDate: String,
+    val primaryGenreName: String,
+    val country: String,
     )  : Serializable
