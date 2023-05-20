@@ -1,4 +1,4 @@
-package com.myproject.playlistmaker
+package com.myproject.playlistmaker.presentation
 
 
 import android.view.View
@@ -7,6 +7,8 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.myproject.playlistmaker.R
+import com.myproject.playlistmaker.domain.models.Track
 import java.text.SimpleDateFormat
 import java.util.*
 

@@ -1,4 +1,4 @@
-package com.myproject.playlistmaker
+package com.myproject.playlistmaker.presentation.ui
 
 import android.content.Intent
 import android.content.res.Configuration
@@ -7,6 +7,8 @@ import android.os.Bundle
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.switchmaterial.SwitchMaterial
+import com.myproject.playlistmaker.App
+import com.myproject.playlistmaker.R
 
 class SettingsActivity : AppCompatActivity() {
 
