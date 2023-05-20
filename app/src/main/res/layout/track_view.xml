@@ -6,8 +6,8 @@
     android:layout_height="wrap_content"
     android:clickable="true"
     android:focusable="true"
-    android:background="?android:attr/selectableItemBackground"
-    android:minHeight="@dimen/track_layout_height">
+    android:minHeight="@dimen/track_layout_height"
+    android:theme="@style/TrackItem">
 
     <LinearLayout
         android:id="@+id/rootLayout"
