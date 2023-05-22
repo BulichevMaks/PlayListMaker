@@ -11,10 +11,6 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.myproject.playlistmaker.R
 import com.myproject.playlistmaker.creator.Creator
-import com.myproject.playlistmaker.data.datasource.sharedpref.TracksSharedPrefDataSourceImpl
-import com.myproject.playlistmaker.domain.models.Track
-import com.myproject.playlistmaker.presentation.ui.SearchActivity.Companion.SEL_ITEM
-import com.myproject.playlistmaker.presentation.ui.SearchActivity.Companion.SEL_ITEM_URL
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -94,7 +90,7 @@ class PlayerViewActivity : AppCompatActivity() {
                 object : Runnable {
                     override fun run() {
 
-                        if (playerApi.getCurrentState() == 2) {
+                        if (playerApi.getCurrentState() == STATE_PLAYING) {
                             trackTime.text = SimpleDateFormat(
                                 "mm:ss", Locale.getDefault()
                             ).format(
@@ -163,5 +159,6 @@ class PlayerViewActivity : AppCompatActivity() {
 
     companion object {
         private const val REFRESH_LIST_DELAY_MILLIS = 500L
+        private const val STATE_PLAYING = 2
     }
 }

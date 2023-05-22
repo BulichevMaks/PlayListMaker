@@ -2,7 +2,6 @@ package com.myproject.playlistmaker.data.playerdata
 
 import android.media.MediaPlayer
 import com.myproject.playlistmaker.domain.models.Track
-import com.myproject.playlistmaker.presentation.ui.PlayerViewActivity
 
 class PlayerHandler: PlayerApi {
     private var playerState = STATE_DEFAULT

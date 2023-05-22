@@ -59,7 +59,6 @@ class TrackRepositoryImpl(
         return transformedTracks
     }
     private fun transformTrackToDomainModels(track: Track): TrackDataSource {
-
           return TrackDataSource(
                 id = track.id,
                 trackName = track.trackName,
@@ -74,7 +73,6 @@ class TrackRepositoryImpl(
             )
     }
     private fun transformTrackToDataModels(track: TrackDataSource): Track {
-
         return Track(
             id = track.id,
             trackName = track.trackName,

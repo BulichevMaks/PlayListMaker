@@ -11,7 +11,7 @@ class App : Application() {
     var darkTheme = false
     override fun onCreate() {
         super.onCreate()
-        instance = this
+        instance = this@App
 
         val sharedPrefs = getSharedPreferences(PREFERENCES, MODE_PRIVATE)
         sharedPrefs.edit()

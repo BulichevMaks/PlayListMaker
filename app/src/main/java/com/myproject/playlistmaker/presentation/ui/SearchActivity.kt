@@ -193,25 +193,29 @@ class SearchActivity : AppCompatActivity() {
             searchTracksUseCase.execute(input) { result ->
                 progressBar.visibility = View.GONE
                 recyclerView.visibility = View.VISIBLE
-                when (result) {
-                    is TracksResult.Success -> {
-                        val tracks = result.tracks
-                        if (tracks.isNotEmpty()) {
-                            this.tracks.clear()
-                            this.tracks.addAll(tracks)
-                            trackAdapter.notifyDataSetChanged()
-                            showMessage("", Event.SUCCESS)
-                        }
-                    }
-                    is TracksResult.Error -> {
-                        when (result.code) {
-                            404 -> showMessage(nothingFound, Event.NOTHING_FOUND)
-                            401 -> showMessage("You are not authorized", Event.ERROR)
-                            500 -> showMessage(errorMessage, Event.SERVER_ERROR)
-                            -1 -> showMessage(nothingFound, Event.NOTHING_FOUND)
-                            else -> showMessage(errorMessage, Event.ERROR)
-                        }
-                    }
+                handlingRequestResult(result)
+            }
+        }
+    }
+
+    private fun handlingRequestResult(result: TracksResult) {
+        when (result) {
+            is TracksResult.Success -> {
+                val tracks = result.tracks
+                if (tracks.isNotEmpty()) {
+                    this.tracks.clear()
+                    this.tracks.addAll(tracks)
+                    trackAdapter.notifyDataSetChanged()
+                    showMessage("", Event.SUCCESS)
+                }
+            }
+            is TracksResult.Error -> {
+                when (result.code) {
+                    404 -> showMessage(nothingFound, Event.NOTHING_FOUND)
+                    401 -> showMessage("You are not authorized", Event.ERROR)
+                    500 -> showMessage(errorMessage, Event.SERVER_ERROR)
+                    -1 -> showMessage(nothingFound, Event.NOTHING_FOUND)
+                    else -> showMessage(errorMessage, Event.ERROR)
                 }
             }
         }
