@@ -1,6 +1,5 @@
-package com.myproject.playlistmaker
+package com.myproject.playlistmaker.presentation.ui
 
-import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.res.Configuration
@@ -11,40 +10,43 @@ import android.os.Parcelable
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
-import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.Gson
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import java.text.SimpleDateFormat
+import com.myproject.playlistmaker.PREFERENCES
+import com.myproject.playlistmaker.R
+import com.myproject.playlistmaker.creator.Creator
+import com.myproject.playlistmaker.domain.models.Track
+
+import com.myproject.playlistmaker.domain.models.TracksResult
+import com.myproject.playlistmaker.domain.usecase.ItemClickUseCase
+import com.myproject.playlistmaker.domain.usecase.ItemHistoryClickUseCase
+import com.myproject.playlistmaker.domain.usecase.SearchTracksUseCase
+import com.myproject.playlistmaker.presentation.Event
+import com.myproject.playlistmaker.presentation.HistoryAdapter
+import com.myproject.playlistmaker.presentation.TrackAdapter
 import java.util.*
 import kotlin.collections.ArrayList
 
 const val LIST_KEY = "key_for_list"
 
 class SearchActivity : AppCompatActivity() {
+    private val trackRepository by lazy {
+        Creator.getTrackRepository()
+    }
+    private val itemClickUseCase by lazy {
+        ItemClickUseCase(trackRepository)
+    }
+    private val searchTracksUseCase by lazy {
+        SearchTracksUseCase(trackRepository)
+    }
+    private val itemHistoryClickUseCase by lazy {
+        ItemHistoryClickUseCase(trackRepository)
+    }
 
-    private val movieBaseUrl = "https://itunes.apple.com"
-
-
-    private val interceptor = HttpLoggingInterceptor()
-    private val okHttpClient = OkHttpClient.Builder().addInterceptor(interceptor)
-        .build()
-    private val retrofit = Retrofit.Builder().client(okHttpClient)
-        .baseUrl(movieBaseUrl)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-
-    private val trackService = retrofit.create(TrackApi::class.java)
     private lateinit var recyclerView: RecyclerView
     private lateinit var linearLayout: LinearLayout
     private lateinit var inputEditText: EditText
@@ -70,7 +72,6 @@ class SearchActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
 
-        interceptor.level = HttpLoggingInterceptor.Level.BODY
         nothingFound = resources.getString(R.string.nothing_found)
         errorMessage = resources.getString(R.string.error_message)
         recyclerView = findViewById(R.id.recyclerView)
@@ -84,7 +85,6 @@ class SearchActivity : AppCompatActivity() {
         clearHistoryButton = findViewById(R.id.clearHistoryButton)
         progressBar = findViewById(R.id.progressBar)
         placeholder.text = nothingFound
-        val context = this
         val sharedPreferences = getSharedPreferences(PREFERENCES, MODE_PRIVATE)
         historyTracks = readFromPref(sharedPreferences)!!
         historyAdapter = HistoryAdapter(historyTracks)
@@ -125,26 +125,15 @@ class SearchActivity : AppCompatActivity() {
         }
 
         trackAdapter.setOnItemClickListener { position ->
+            itemClickUseCase.execute(tracks, historyTracks, position)
             if (clickDebounce()) {
-                startIntent(position, tracks)
-            }
-            val items = historyTracks
-
-            if (!items.contains(tracks[position])) {
-                if (items.size < 10) {
-                    items.add(tracks[position])
-                } else {
-                    items.removeAt(0)
-                    items.add(tracks[position])
-                }
-            } else {
-                items.remove(tracks[position])
-                items.add(tracks[position])
+                startIntent()
             }
         }
 
-        historyAdapter.setOnItemClickListener {position ->
-            startIntent(position, historyTracks)
+        historyAdapter.setOnItemClickListener { position ->
+            itemHistoryClickUseCase.execute(historyTracks, position)
+            startIntent()
         }
 
         val searchTextWatcher = object : TextWatcher {
@@ -165,18 +154,18 @@ class SearchActivity : AppCompatActivity() {
         }
         inputEditText.addTextChangedListener(searchTextWatcher)
     }
+
     override fun onStop() {
         super.onStop()
         val sharedPreferences = getSharedPreferences(PREFERENCES, MODE_PRIVATE)
         writeToPref(sharedPreferences, historyTracks)
     }
-    private fun startIntent(position: Int, tracks: ArrayList<Track>) {
-        val selectedItem = tracks[position]
+
+    private fun startIntent() {
         val intent = Intent(this, PlayerViewActivity::class.java)
-        intent.putExtra(SEL_ITEM_URL, selectedItem.artworkUrl100)
-        intent.putExtra(SEL_ITEM, selectedItem)
         startActivity(intent)
     }
+
     fun showHistory(s: CharSequence?) {
         if (inputEditText.hasFocus() && s?.isEmpty() == true && historyTracks.isNotEmpty()
         ) {
@@ -195,92 +184,96 @@ class SearchActivity : AppCompatActivity() {
             text.visibility = View.GONE
         }
     }
+
     private fun search() {
         if (input.isNotEmpty()) {
             progressBar.visibility = View.VISIBLE
             recyclerView.visibility = View.GONE
             placeholder.visibility = View.GONE
-            trackService.search(input)
-                .enqueue(object : Callback<TrackResponse> {
-                    override fun onResponse(
-                        call: Call<TrackResponse>,
-                        response: Response<TrackResponse>
-                    ) {
-                        progressBar.visibility = View.GONE
-                        recyclerView.visibility = View.VISIBLE
-                        when (response.code()) {
-                            200 -> {
-                                if (response.body()?.results?.isNotEmpty() == true) {
-                                    tracks.clear()
-                                    tracks.addAll(response.body()?.results!!)
-                                    trackAdapter.notifyDataSetChanged()
-                                    showMessage("", Event.SUCCESS)
-                                } else {
-                                    showMessage(nothingFound, Event.NOTHING_FOUND)
-                                }
-                            }
-                            404 -> showMessage(nothingFound, Event.NOTHING_FOUND)
-                            401 -> showMessage("You are not authorisation", Event.ERROR)
-                            else -> showMessage(errorMessage, Event.ERROR)
-                        }
-                    }
+            searchTracksUseCase.execute(input) { result ->
+                progressBar.visibility = View.GONE
+                recyclerView.visibility = View.VISIBLE
+                handlingRequestResult(result)
+            }
+        }
+    }
 
-                    override fun onFailure(call: Call<TrackResponse>, t: Throwable) {
-                        progressBar.visibility = View.GONE
-                        showMessage(errorMessage, Event.SERVER_ERROR)
-                    }
-                })
+    private fun handlingRequestResult(result: TracksResult) {
+        when (result) {
+            is TracksResult.Success -> {
+                val tracks = result.tracks
+                if (tracks.isNotEmpty()) {
+                    this.tracks.clear()
+                    this.tracks.addAll(tracks)
+                    trackAdapter.notifyDataSetChanged()
+                    showMessage("", Event.SUCCESS)
+                }
+            }
+            is TracksResult.Error -> {
+                when (result.code) {
+                    404 -> showMessage(nothingFound, Event.NOTHING_FOUND)
+                    401 -> showMessage("You are not authorized", Event.ERROR)
+                    500 -> showMessage(errorMessage, Event.SERVER_ERROR)
+                    -1 -> showMessage(nothingFound, Event.NOTHING_FOUND)
+                    else -> showMessage(errorMessage, Event.ERROR)
+                }
+            }
         }
     }
 
     private fun showMessage(text: String, event: Event) {
-        placeholder = findViewById(R.id.placeholder)
-        when (event) {
-            Event.SUCCESS -> {
-                placeholder.visibility = View.GONE
-                buttonRefresh.visibility = View.GONE
-            }
-            Event.NOTHING_FOUND -> {
-                tracks.clear()
-                trackAdapter.notifyDataSetChanged()
-                placeholder.text = text
-                placeholder.visibility = View.VISIBLE
-                buttonRefresh.visibility = View.GONE
-                image = if (isDarkTheme()) {
-                    placeholder.setDrawableTop(R.drawable.error_not_found_dark)
-                    R.drawable.error_not_found_dark
-                } else {
-                    placeholder.setDrawableTop(R.drawable.error_not_found_light)
-                    R.drawable.error_not_found_light
+        runOnUiThread {
+            placeholder = findViewById(R.id.placeholder)
+            when (event) {
+                Event.SUCCESS -> {
+                    placeholder.visibility = View.GONE
+                    buttonRefresh.visibility = View.GONE
+                    recyclerView.visibility = View.VISIBLE
                 }
-            }
-            Event.ERROR -> {
-                tracks.clear()
-                trackAdapter.notifyDataSetChanged()
-                placeholder.text = text
-            }
-            Event.SERVER_ERROR -> {
-                tracks.clear()
-                trackAdapter.notifyDataSetChanged()
-                placeholder.text = text
-                placeholder.visibility = View.VISIBLE
-                buttonRefresh.visibility = View.VISIBLE
-                image = if (isDarkTheme()) {
-                    placeholder.setDrawableTop(R.drawable.error_enternet_dark)
-                    R.drawable.error_enternet_dark
+                Event.NOTHING_FOUND -> {
+                    tracks.clear()
+                    trackAdapter.notifyDataSetChanged()
+                    placeholder.text = text
+                    placeholder.visibility = View.VISIBLE
+                    buttonRefresh.visibility = View.GONE
+                    image = if (isDarkTheme()) {
+                        placeholder.setDrawableTop(R.drawable.error_not_found_dark)
+                        R.drawable.error_not_found_dark
+                    } else {
+                        placeholder.setDrawableTop(R.drawable.error_not_found_light)
+                        R.drawable.error_not_found_light
+                    }
+                }
+                Event.ERROR -> {
+                    tracks.clear()
+                    trackAdapter.notifyDataSetChanged()
+                    placeholder.text = text
+                }
+                Event.SERVER_ERROR -> {
+                    tracks.clear()
+                    trackAdapter.notifyDataSetChanged()
+                    placeholder.text = text
+                    placeholder.visibility = View.VISIBLE
+                    buttonRefresh.visibility = View.VISIBLE
+                    image = if (isDarkTheme()) {
+                        placeholder.setDrawableTop(R.drawable.error_enternet_dark)
+                        R.drawable.error_enternet_dark
 
-                } else {
-                    placeholder.setDrawableTop(R.drawable.error_enternet_light)
-                    R.drawable.error_enternet_light
+                    } else {
+                        placeholder.setDrawableTop(R.drawable.error_enternet_light)
+                        R.drawable.error_enternet_light
+                    }
                 }
             }
         }
     }
+
     private fun searchDebounce() {
         handler.removeCallbacks(searchRunnable)
         handler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
     }
-    private fun clickDebounce() : Boolean {
+
+    private fun clickDebounce(): Boolean {
         val current = isClickAllowed
         if (isClickAllowed) {
             isClickAllowed = false
@@ -288,14 +281,17 @@ class SearchActivity : AppCompatActivity() {
         }
         return current
     }
+
     private fun isDarkTheme(): Boolean {
         val currentNightMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
         return currentNightMode == Configuration.UI_MODE_NIGHT_YES
     }
+
     private fun TextView.setDrawableTop(iconId: Int) {
         val icon = this.context?.resources?.getDrawable(iconId)
         this.setCompoundDrawablesWithIntrinsicBounds(null, icon, null, null)
     }
+
     private fun clearButtonVisibility(s: CharSequence?): Int {
         return if (s.isNullOrEmpty()) {
             View.GONE
@@ -303,6 +299,7 @@ class SearchActivity : AppCompatActivity() {
             View.VISIBLE
         }
     }
+
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putString(TEXT_CONTENTS, input)
@@ -317,6 +314,7 @@ class SearchActivity : AppCompatActivity() {
             )
         }
     }
+
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
         input = savedInstanceState.getString(TEXT_CONTENTS, "")
@@ -330,16 +328,19 @@ class SearchActivity : AppCompatActivity() {
             tracks.addAll(savedInstanceState.getParcelableArrayList<Parcelable>(TRACK_LIST) as ArrayList<Track>)
         }
     }
+
     private fun writeToPref(sharedPreferences: SharedPreferences, user: ArrayList<Track>) {
         val json = Gson().toJson(user)
         sharedPreferences.edit()
             .putString(LIST_KEY, json)
             .apply()
     }
+
     private fun readFromPref(sharedPreferences: SharedPreferences): ArrayList<Track>? {
         val json = sharedPreferences.getString(LIST_KEY, null) ?: return arrayListOf()
         return Gson().fromJson(json, Array<Track>::class.java)?.let { ArrayList(it.toList()) }
     }
+
     companion object {
         private var input = ""
         const val TEXT_CONTENTS = "TEXT_CONTENTS"

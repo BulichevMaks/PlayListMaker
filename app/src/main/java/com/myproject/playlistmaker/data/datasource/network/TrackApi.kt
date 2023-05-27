@@ -1,4 +1,4 @@
-package com.myproject.playlistmaker
+package com.myproject.playlistmaker.data.datasource.network
 
 import retrofit2.Call
 import retrofit2.http.GET

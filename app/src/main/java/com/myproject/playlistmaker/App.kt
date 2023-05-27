@@ -9,9 +9,9 @@ const val EDIT_TEXT_KEY = "key_for_edit_text"
 class App : Application() {
 
     var darkTheme = false
-
     override fun onCreate() {
         super.onCreate()
+        instance = this@App
 
         val sharedPrefs = getSharedPreferences(PREFERENCES, MODE_PRIVATE)
         sharedPrefs.edit()
@@ -30,5 +30,11 @@ class App : Application() {
                 AppCompatDelegate.MODE_NIGHT_NO
             }
         )
+    }
+    companion object {
+        private lateinit var instance: App
+        fun getInstance(): App {
+            return instance
+        }
     }
 }

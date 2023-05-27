@@ -1,4 +1,4 @@
-package com.myproject.playlistmaker
+package com.myproject.playlistmaker.domain.models
 
 import java.io.Serializable
 
@@ -8,9 +8,9 @@ data class Track(
     val artistName: String,
     val trackTimeMillis: String?,
     val artworkUrl100: String,
-    val previewUrl: String,
+    val previewUrl: String?,
     val collectionName: String,
-    val releaseDate: String,
+    val releaseDate: String?,
     val primaryGenreName: String,
     val country: String,
-    )  : Serializable
+) : Serializable
