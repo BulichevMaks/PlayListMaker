@@ -1,6 +1,8 @@
 package com.myproject.playlistmaker.settings.ui.activity
 
+import android.content.ComponentCallbacks
 import android.content.Intent
+import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -14,6 +16,8 @@ class SettingsActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySettingsBinding
     private lateinit var vm: SettingsViewModel
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -59,8 +63,24 @@ class SettingsActivity : AppCompatActivity() {
 
         binding.themeSwitcher.setOnCheckedChangeListener { switcher, checked ->
             vm.switchTheme(checked)
-
         }
+
+
+        val configuration = resources.configuration
+        var currentNightMode = configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+        registerComponentCallbacks(object : ComponentCallbacks {
+            override fun onConfigurationChanged(newConfig: Configuration) {
+                val newNightMode = newConfig.uiMode and Configuration.UI_MODE_NIGHT_MASK
+                if (currentNightMode != newNightMode) {
+                    currentNightMode = newNightMode
+                    binding.themeSwitcher.isChecked = currentNightMode == Configuration.UI_MODE_NIGHT_YES
+                }
+            }
+
+            override fun onLowMemory() {}
+        })
+        binding.themeSwitcher.isChecked = vm.getCurrentTheme() == Configuration.UI_MODE_NIGHT_YES
     }
+
 
 }

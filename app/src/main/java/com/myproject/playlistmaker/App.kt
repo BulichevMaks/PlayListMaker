@@ -1,9 +1,11 @@
 package com.myproject.playlistmaker
 
 import android.app.Application
+import android.content.ComponentCallbacks
+import android.content.res.Configuration
+import androidx.appcompat.app.AppCompatDelegate
 import com.myproject.playlistmaker.settings.di.Creator
 import com.myproject.playlistmaker.settings.domain.SettingsInteractor
-
 class App : Application() {
 
     lateinit var settingsInteractor: SettingsInteractor
@@ -13,6 +15,33 @@ class App : Application() {
         settingsInteractor = Creator.provideSettingsInteractor(this)
         settingsInteractor.useCurrentTheme()
         instance = this@App
+
+        val configuration = resources.configuration
+        var currentNightMode = configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+
+        registerComponentCallbacks(object : ComponentCallbacks {
+            override fun onConfigurationChanged(newConfig: Configuration) {
+                val newNightMode = newConfig.uiMode and Configuration.UI_MODE_NIGHT_MASK
+                if (currentNightMode != newNightMode) {
+                    currentNightMode = newNightMode
+                    switchTheme(currentNightMode)
+                }
+            }
+
+            override fun onLowMemory() {}
+        })
+
+    }
+
+    fun switchTheme(darkThemeEnabled: Int) {
+
+        AppCompatDelegate.setDefaultNightMode(
+            if (darkThemeEnabled == Configuration.UI_MODE_NIGHT_YES) {
+                AppCompatDelegate.MODE_NIGHT_YES
+            } else {
+                AppCompatDelegate.MODE_NIGHT_NO
+            }
+        )
     }
 
     companion object {

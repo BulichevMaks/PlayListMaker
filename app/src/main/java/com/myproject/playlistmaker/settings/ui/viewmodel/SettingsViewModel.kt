@@ -1,9 +1,10 @@
 package com.myproject.playlistmaker.settings.ui.viewmodel
 
+import android.content.res.Configuration
 import androidx.lifecycle.*
 import com.myproject.playlistmaker.App
 
-class SettingsViewModel(application: App) : AndroidViewModel(application) {
+class SettingsViewModel(private val application: App) : AndroidViewModel(application) {
 
     private val settingsInteractor = application.settingsInteractor
 
@@ -13,6 +14,14 @@ class SettingsViewModel(application: App) : AndroidViewModel(application) {
 
     fun isDarkOn(): Boolean {
         return settingsInteractor.isDarkOn()
+    }
+
+    fun getCurrentTheme(): Int {
+        return if (isDarkOn()) {
+            Configuration.UI_MODE_NIGHT_YES
+        } else {
+            Configuration.UI_MODE_NIGHT_NO
+        }
     }
 
     companion object {
