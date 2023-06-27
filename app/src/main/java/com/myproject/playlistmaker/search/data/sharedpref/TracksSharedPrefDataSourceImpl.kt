@@ -23,9 +23,6 @@ class TracksSharedPrefDataSourceImpl(context: Context): TracksSharedPrefStorage 
         return readFromPref(sharedPreferences)
     }
 
-//    override fun getTracksFromPref(): ArrayList<TrackDataSource>? {
-//        return readTracksFromPref(sharedPreferences)
-//    }
 override fun getTracksFromPref(): ArrayList<Track>? {
     return readTracksFromPref(sharedPreferences)
 }

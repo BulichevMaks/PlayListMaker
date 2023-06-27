@@ -12,7 +12,7 @@ import java.net.SocketTimeoutException
 
 class RetrofitNetworkClientImpl(private val context: Context):
     NetworkClient {
-    private val baseUrl = "https://itunes.apple.com"
+    private val baseUrl = ITUNES_BASE_URL
     private val interceptor = HttpLoggingInterceptor()
     private val okHttpClient = OkHttpClient.Builder().addInterceptor(interceptor)
         .build()
@@ -56,6 +56,10 @@ class RetrofitNetworkClientImpl(private val context: Context):
             }
         }
         return false
+    }
+
+    companion object{
+        private const val ITUNES_BASE_URL = "https://itunes.apple.com"
     }
 
 }

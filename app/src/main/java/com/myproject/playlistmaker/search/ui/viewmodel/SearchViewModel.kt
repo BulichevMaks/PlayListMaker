@@ -32,11 +32,6 @@ class SearchViewModel(
 
     private var latestSearchText: String? = null
 
-    private val latestSearchTextLiveData = MutableLiveData<String>()
-
-    fun latestSearchText(): LiveData<String> {
-        return latestSearchTextLiveData
-    }
 
     private val historyTracksLiveData = MediatorLiveData<ArrayList<Track>>()
 

@@ -37,7 +37,6 @@ class SearchRepositoryImpl(
     override fun readTracksFromSharedPref(): ArrayList<Track>? {
         return tracksSharedPrefStorage.getTracksFromPref()
             ?.let { it }
-        // ?.let { Mapper.transformTracksDataSourceToDomainModels(it) }
     }
 
     override fun writeTracksToPref(tracks: ArrayList<Track>) {

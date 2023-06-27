@@ -19,7 +19,7 @@
 
 
     <Button
-        android:id="@+id/button1"
+        android:id="@+id/toSearchActivityButton"
         style="@style/ActivityMainButtonTextStyle"
         android:layout_marginTop="40dp"
         android:text="@string/search"
@@ -27,14 +27,14 @@
         app:icon="@drawable/ic_search" />
 
     <Button
-        android:id="@+id/button2"
+        android:id="@+id/toMediaLibraryActivityButton"
         style="@style/ActivityMainButtonTextStyle"
         android:layout_marginTop="16dp"
         android:text="@string/media_library"
         app:icon="@drawable/ic_media_library" />
 
     <Button
-        android:id="@+id/button3"
+        android:id="@+id/toSettingsActivityButton"
         style="@style/ActivityMainButtonTextStyle"
         android:layout_marginTop="16dp"
         android:layout_marginBottom="14dp"

@@ -18,7 +18,7 @@
         android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar"
         tools:targetApi="31">
         <activity
-            android:name=".player.ui.activity.PlayerViewActivity"
+            android:name=".player.ui.activity.PlayerActivity"
             android:exported="false" />
         <activity
             android:name=".medialibrary.ui.MediaLibraryActivity"

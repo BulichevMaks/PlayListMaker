@@ -11,7 +11,7 @@ import com.myproject.playlistmaker.databinding.PlayerViewBinding
 import com.myproject.playlistmaker.player.ui.viewmodel.PlayerViewModel
 import com.myproject.playlistmaker.player.ui.viewmodel.PlayerViewModelFactory
 
-class PlayerViewActivity : AppCompatActivity() {
+class PlayerActivity : AppCompatActivity() {
 
     private lateinit var vm: PlayerViewModel
     private lateinit var binding: PlayerViewBinding
@@ -24,13 +24,15 @@ class PlayerViewActivity : AppCompatActivity() {
         vm = ViewModelProvider(this, PlayerViewModelFactory())[PlayerViewModel::class.java]
 
         val track = vm.getTrack()
-        binding.trackName.text = track.trackName
-        binding.artistName.text = track.artistName
-        binding.duration.text = track.trackTimeMillis
-        binding.collectionName.text = track.collectionName
-        binding. releaseDate.text = track.releaseDate
-        binding.primaryGenreName.text = track.primaryGenreName
-        binding.country.text = track.country
+        binding.apply {
+            trackName.text = track.trackName
+            artistName.text = track.artistName
+            duration.text = track.trackTimeMillis
+            collectionName.text = track.collectionName
+            releaseDate.text = track.releaseDate
+            primaryGenreName.text = track.primaryGenreName
+            country.text = track.country
+        }
 
         Glide.with(this)
             .load(track.artworkUrl100)
@@ -48,7 +50,7 @@ class PlayerViewActivity : AppCompatActivity() {
         binding.playButton.setOnClickListener {
             vm.playHandlerControl()
             vm.observeStateLiveData().observe(this) {
-                if(it) {
+                if (it) {
                     if (isThemeNight()) {
                         binding.playButton.setImageResource(R.drawable.ic_pause_button_night)
                     } else {
@@ -64,10 +66,12 @@ class PlayerViewActivity : AppCompatActivity() {
             }
         }
     }
+
     override fun onPause() {
         super.onPause()
         vm.pausePlayer()
     }
+
     override fun onDestroy() {
         super.onDestroy()
         vm.onDestroy()
