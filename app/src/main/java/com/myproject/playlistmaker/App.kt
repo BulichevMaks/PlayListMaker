@@ -1,36 +1,49 @@
 package com.myproject.playlistmaker
 
 import android.app.Application
+import android.content.ComponentCallbacks
+import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatDelegate
-
-const val PREFERENCES = "practicum_example_preferences"
-const val EDIT_TEXT_KEY = "key_for_edit_text"
-
+import com.myproject.playlistmaker.settings.di.Creator
+import com.myproject.playlistmaker.settings.domain.SettingsInteractor
 class App : Application() {
 
-    var darkTheme = false
+    lateinit var settingsInteractor: SettingsInteractor
+
     override fun onCreate() {
         super.onCreate()
+        settingsInteractor = Creator.provideSettingsInteractor(this)
+        settingsInteractor.useCurrentTheme()
         instance = this@App
 
-        val sharedPrefs = getSharedPreferences(PREFERENCES, MODE_PRIVATE)
-        sharedPrefs.edit()
-            .putBoolean(EDIT_TEXT_KEY, darkTheme)
-            .apply()
+        val configuration = resources.configuration
+        var currentNightMode = configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
 
-        switchTheme(sharedPrefs.getBoolean(EDIT_TEXT_KEY, true))
+        registerComponentCallbacks(object : ComponentCallbacks {
+            override fun onConfigurationChanged(newConfig: Configuration) {
+                val newNightMode = newConfig.uiMode and Configuration.UI_MODE_NIGHT_MASK
+                if (currentNightMode != newNightMode) {
+                    currentNightMode = newNightMode
+                    switchTheme(currentNightMode)
+                }
+            }
+
+            override fun onLowMemory() {}
+        })
+
     }
 
-    fun switchTheme(darkThemeEnabled: Boolean) {
-        darkTheme = darkThemeEnabled
+    fun switchTheme(darkThemeEnabled: Int) {
+
         AppCompatDelegate.setDefaultNightMode(
-            if (darkThemeEnabled) {
+            if (darkThemeEnabled == Configuration.UI_MODE_NIGHT_YES) {
                 AppCompatDelegate.MODE_NIGHT_YES
             } else {
                 AppCompatDelegate.MODE_NIGHT_NO
             }
         )
     }
+
     companion object {
         private lateinit var instance: App
         fun getInstance(): App {
