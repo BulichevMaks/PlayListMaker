@@ -7,12 +7,10 @@ import android.os.Handler
 import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.myproject.playlistmaker.R
 import com.myproject.playlistmaker.databinding.ActivitySearchBinding
@@ -22,13 +20,13 @@ import com.myproject.playlistmaker.search.domain.madel.Track
 import com.myproject.playlistmaker.search.ui.models.SearchState
 
 import com.myproject.playlistmaker.search.ui.viewmodel.SearchViewModel
-import com.myproject.playlistmaker.search.ui.viewmodel.SearchViewModelFactory
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import kotlin.collections.ArrayList
 
 
 class SearchActivity : AppCompatActivity() {
 
-    private lateinit var vm: SearchViewModel
+    private val vm: SearchViewModel by viewModel()
 
     private lateinit var binding: ActivitySearchBinding
     private var image = R.drawable.error_not_found_dark
@@ -45,8 +43,6 @@ class SearchActivity : AppCompatActivity() {
 
         binding = ActivitySearchBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        vm = ViewModelProvider(this, SearchViewModelFactory())[SearchViewModel::class.java]
 
         savedInstanceState?.let {
             image = it.getInt(IMAGE)
@@ -103,26 +99,6 @@ class SearchActivity : AppCompatActivity() {
             }
         }
 
-//        textWatcher = object : TextWatcher {
-//            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-//
-//            }
-//
-//            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-//
-//                vm.searchDebounce(
-//                    changedText = s?.toString() ?: ""
-//                )
-//
-//                binding.clearIcon.visibility = clearButtonVisibility(s)
-//                showHistory(s)
-//            }
-//
-//            override fun afterTextChanged(s: Editable?) {
-//
-//            }
-//        }
-//        textWatcher?.let { binding.inputEditText.addTextChangedListener(it) }
         inputTextHandle()
 
         vm.observeHistoryTracks().observe(this) {

@@ -6,25 +6,20 @@ import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
-import com.myproject.playlistmaker.App
 import com.myproject.playlistmaker.R
 import com.myproject.playlistmaker.databinding.ActivitySettingsBinding
 import com.myproject.playlistmaker.settings.ui.viewmodel.SettingsViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SettingsActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySettingsBinding
-    private lateinit var vm: SettingsViewModel
-
-
+    private val vm: SettingsViewModel by viewModel()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         binding = ActivitySettingsBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        vm = ViewModelProvider(this, SettingsViewModel.getViewModelFactory(application as App))[SettingsViewModel::class.java]
 
         binding.buttonBack.setOnClickListener {
             finish()

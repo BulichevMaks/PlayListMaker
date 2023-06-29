@@ -1,18 +1,18 @@
 package com.myproject.playlistmaker.search.data.repository
 
 import com.myproject.playlistmaker.search.data.Mapper
-import com.myproject.playlistmaker.search.data.network.RetrofitNetworkClientImpl
+import com.myproject.playlistmaker.search.data.api.NetworkClient
+import com.myproject.playlistmaker.search.data.api.TracksSharedPrefStorage
 import com.myproject.playlistmaker.search.data.network.TrackResponse
 import com.myproject.playlistmaker.search.data.network.TracksSearchRequest
-import com.myproject.playlistmaker.search.data.sharedpref.TracksSharedPrefDataSourceImpl
 import com.myproject.playlistmaker.search.domain.api.SearchRepository
 import com.myproject.playlistmaker.search.domain.madel.Track
 import com.myproject.playlistmaker.search.domain.madel.SearchResult
 
 
 class SearchRepositoryImpl(
-    private val tracksNetworkStorage: RetrofitNetworkClientImpl,
-    private val tracksSharedPrefStorage: TracksSharedPrefDataSourceImpl
+    private val tracksNetworkStorage: NetworkClient,
+    private val tracksSharedPrefStorage: TracksSharedPrefStorage
 ) : SearchRepository {
 
     override fun getTracksByName(trackName: String): SearchResult<List<Track>> {

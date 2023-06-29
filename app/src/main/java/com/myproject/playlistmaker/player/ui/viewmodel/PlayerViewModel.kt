@@ -34,8 +34,11 @@ class PlayerViewModel(
         playerStateLiveData.value = false
     }
 
-    fun onDestroy() {
+    public override fun onCleared() {
         playerInteractor.onDestroy()
+        super.onCleared()
+        mainThreadHandler?.removeCallbacksAndMessages(null)
+        mainThreadHandler = null
     }
 
     fun playHandlerControl() {

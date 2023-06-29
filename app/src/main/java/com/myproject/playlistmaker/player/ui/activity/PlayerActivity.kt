@@ -3,25 +3,22 @@ package com.myproject.playlistmaker.player.ui.activity
 import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.myproject.playlistmaker.R
 import com.myproject.playlistmaker.databinding.PlayerViewBinding
 import com.myproject.playlistmaker.player.ui.viewmodel.PlayerViewModel
-import com.myproject.playlistmaker.player.ui.viewmodel.PlayerViewModelFactory
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class PlayerActivity : AppCompatActivity() {
 
-    private lateinit var vm: PlayerViewModel
+    private val vm: PlayerViewModel by viewModel()
     private lateinit var binding: PlayerViewBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = PlayerViewBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        vm = ViewModelProvider(this, PlayerViewModelFactory())[PlayerViewModel::class.java]
 
         val track = vm.getTrack()
         binding.apply {
@@ -74,7 +71,8 @@ class PlayerActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        vm.onDestroy()
+        vm.onCleared()
+
     }
 
     private fun isThemeNight(): Boolean {
