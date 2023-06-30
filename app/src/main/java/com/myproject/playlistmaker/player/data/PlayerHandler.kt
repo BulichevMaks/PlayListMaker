@@ -4,7 +4,7 @@ import android.media.MediaPlayer
 import com.myproject.playlistmaker.player.domain.api.PlayerApi
 import com.myproject.playlistmaker.player.domain.model.Track
 
-class PlayerHandler(private var mediaPlayer: MediaPlayer): PlayerApi {
+class PlayerHandler(private val mediaPlayer: MediaPlayer): PlayerApi {
 
     private var playerState = STATE_DEFAULT
     override fun preparePlayer(track: Track) {
@@ -25,7 +25,6 @@ class PlayerHandler(private var mediaPlayer: MediaPlayer): PlayerApi {
     override fun onDestroy() {
         playerState = STATE_PREPARED
         mediaPlayer.release()
-        mediaPlayer = MediaPlayer() // ???????????????????
     }
     override fun getCurrentPosition(): Int {
         return mediaPlayer.currentPosition

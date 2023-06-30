@@ -19,31 +19,33 @@ import org.koin.dsl.module
 const val PREFERENCES = "preferences"
 
 val playerModule = module {
+
     single {
         androidContext()
             .getSharedPreferences(PREFERENCES, Context.MODE_PRIVATE)
     }
+
     factory { Gson() }
+
     single<TracksSharedPrefStorage> {
         PlayerSharedPrefDataSourceImpl(get(), get())
     }
+
     factory {
         MediaPlayer()
     }
+
     factory<PlayerApi> {
         PlayerHandler(get())
     }
-
 
     viewModel {
         PlayerViewModel(get())
     }
 
-
     factory<PlayerRepository> {
         PlayerRepositoryImpl(get())
     }
-
 
     factory<PlayerInteractor> {
         PlayerInteractorImpl(get(), get())

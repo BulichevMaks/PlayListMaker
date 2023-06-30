@@ -10,7 +10,7 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.myproject.playlistmaker.R
 import com.myproject.playlistmaker.search.domain.madel.Track
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Locale
 
 
 class TrackViewHolder(private val item: View) : RecyclerView.ViewHolder(item) {
@@ -25,7 +25,7 @@ class TrackViewHolder(private val item: View) : RecyclerView.ViewHolder(item) {
         tvArtistName.text = model.artistName.trimEnd()
         tvTrackTime.text = model.trackTimeMillis?.let {
             SimpleDateFormat("mm:ss", Locale.getDefault()).format(it.toLong())
-        }.toString()
+        } ?: ""
 
         Glide.with(item.context)
             .load(model.artworkUrl100)

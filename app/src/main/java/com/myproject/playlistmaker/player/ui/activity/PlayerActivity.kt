@@ -41,38 +41,37 @@ class PlayerActivity : AppCompatActivity() {
         binding.buttonBack.setOnClickListener {
             finish()
         }
+
         vm.observeTimingLiveData().observe(this) {
             binding.trackTime.text = it
         }
+
+        vm.observeStateLiveData().observe(this) {
+            playButtonControl(it)
+        }
+
         binding.playButton.setOnClickListener {
             vm.playHandlerControl()
             vm.observeStateLiveData().observe(this) {
-                if (it) {
-                    if (isThemeNight()) {
-                        binding.playButton.setImageResource(R.drawable.ic_pause_button_night)
-                    } else {
-                        binding.playButton.setImageResource(R.drawable.ic_pause_button)
-                    }
-                } else {
-                    if (isThemeNight()) {
-                        binding.playButton.setImageResource(R.drawable.ic_play_button_night)
-                    } else {
-                        binding.playButton.setImageResource(R.drawable.ic_play_button)
-                    }
-                }
+                playButtonControl(it)
             }
         }
     }
 
-    override fun onPause() {
-        super.onPause()
-        vm.pausePlayer()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        vm.onCleared()
-
+    private fun playButtonControl(state: Boolean) {
+        if (state) {
+            if (isThemeNight()) {
+                binding.playButton.setImageResource(R.drawable.ic_pause_button_night)
+            } else {
+                binding.playButton.setImageResource(R.drawable.ic_pause_button)
+            }
+        } else {
+            if (isThemeNight()) {
+                binding.playButton.setImageResource(R.drawable.ic_play_button_night)
+            } else {
+                binding.playButton.setImageResource(R.drawable.ic_play_button)
+            }
+        }
     }
 
     private fun isThemeNight(): Boolean {

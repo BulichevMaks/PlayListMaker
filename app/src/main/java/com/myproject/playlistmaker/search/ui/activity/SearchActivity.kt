@@ -1,7 +1,6 @@
 package com.myproject.playlistmaker.search.ui.activity
 
 import android.content.Intent
-import android.content.res.Configuration
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -9,8 +8,9 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.view.inputmethod.InputMethodManager
-import android.widget.*
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.myproject.playlistmaker.R
 import com.myproject.playlistmaker.databinding.ActivitySearchBinding
@@ -29,7 +29,7 @@ class SearchActivity : AppCompatActivity() {
     private val vm: SearchViewModel by viewModel()
 
     private lateinit var binding: ActivitySearchBinding
-    private var image = R.drawable.error_not_found_dark
+
     private var tracks: ArrayList<Track> = ArrayList()
     private var historyTracks: ArrayList<Track> = ArrayList()
     private val trackAdapter = TrackAdapter(tracks)
@@ -44,12 +44,9 @@ class SearchActivity : AppCompatActivity() {
         binding = ActivitySearchBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        savedInstanceState?.let {
-            image = it.getInt(IMAGE)
-            binding.placeholder.setDrawableTop(image)
-        }
         binding.recyclerView.layoutManager =
             LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+
         binding.recyclerView.adapter = trackAdapter
 
         binding.clearIcon.setOnClickListener {
@@ -105,6 +102,7 @@ class SearchActivity : AppCompatActivity() {
             historyTracks = it
             historyAdapter = HistoryAdapter(historyTracks)
         }
+
         vm.observeState().observe(this) {
             render(it)
         }
@@ -123,21 +121,15 @@ class SearchActivity : AppCompatActivity() {
     private fun inputTextHandle() {
         textWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-
             }
-
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-
                 vm.searchDebounce(
                     changedText = s?.toString() ?: ""
                 )
-
                 binding.clearIcon.visibility = clearButtonVisibility(s)
                 showHistory(s)
             }
-
             override fun afterTextChanged(s: Editable?) {
-
             }
         }
         textWatcher?.let { binding.inputEditText.addTextChangedListener(it) }
@@ -186,6 +178,7 @@ class SearchActivity : AppCompatActivity() {
             is SearchState.ServerError -> showServerError(state.errorMessage)
             is SearchState.Empty -> showEmpty(state.message)
         }
+        hideKeyboard()
     }
 
     private fun showLoading() {
@@ -237,13 +230,7 @@ class SearchActivity : AppCompatActivity() {
                         progressBar.visibility = View.GONE
                         placeholder.visibility = View.VISIBLE
                         buttonRefresh.visibility = View.GONE
-                    }
-                    image = if (isDarkTheme()) {
-                        binding.placeholder.setDrawableTop(R.drawable.error_not_found_dark)
-                        R.drawable.error_not_found_dark
-                    } else {
-                        binding.placeholder.setDrawableTop(R.drawable.error_not_found_light)
-                        R.drawable.error_not_found_light
+                        placeholder.setDrawableTop(R.drawable.error_not_found)
                     }
                 }
                 Event.SERVER_ERROR -> {
@@ -260,14 +247,7 @@ class SearchActivity : AppCompatActivity() {
                         placeholder.text = text
                         placeholder.visibility = View.VISIBLE
                         buttonRefresh.visibility = View.VISIBLE
-                    }
-                    image = if (isDarkTheme()) {
-                        binding.placeholder.setDrawableTop(R.drawable.error_enternet_dark)
-                        R.drawable.error_enternet_dark
-
-                    } else {
-                        binding.placeholder.setDrawableTop(R.drawable.error_enternet_light)
-                        R.drawable.error_enternet_light
+                        placeholder.setDrawableTop(R.drawable.error_enternet)
                     }
                 }
             }
@@ -283,14 +263,17 @@ class SearchActivity : AppCompatActivity() {
         return current
     }
 
-    private fun isDarkTheme(): Boolean {
-        val currentNightMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
-        return currentNightMode == Configuration.UI_MODE_NIGHT_YES
+    private fun TextView.setDrawableTop(iconId: Int) {
+        val icon = ContextCompat.getDrawable(context, iconId)
+        this.setCompoundDrawablesWithIntrinsicBounds(null, icon, null, null)
     }
 
-    private fun TextView.setDrawableTop(iconId: Int) {
-        val icon = this.context?.resources?.getDrawable(iconId)
-        this.setCompoundDrawablesWithIntrinsicBounds(null, icon, null, null)
+    private fun hideKeyboard() {
+        val inputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        val view: View? = currentFocus
+        if (view != null) {
+            inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
+        }
     }
 
     private fun clearButtonVisibility(s: CharSequence?): Int {
@@ -302,7 +285,6 @@ class SearchActivity : AppCompatActivity() {
     }
 
     companion object {
-        const val IMAGE = "IMAGE"
         private const val CLICK_DEBOUNCE_DELAY = 1000L
     }
 }

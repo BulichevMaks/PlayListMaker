@@ -10,7 +10,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.myproject.playlistmaker.R
 import com.myproject.playlistmaker.search.domain.madel.Track
-import com.myproject.playlistmaker.search.domain.usecase.*
+import com.myproject.playlistmaker.search.domain.usecase.ItemClickUseCase
+import com.myproject.playlistmaker.search.domain.usecase.ItemHistoryClickUseCase
+import com.myproject.playlistmaker.search.domain.usecase.SearchTracksUseCase
+import com.myproject.playlistmaker.search.domain.usecase.ShowHistoryUseCase
+import com.myproject.playlistmaker.search.domain.usecase.StopActivityUseCase
 import com.myproject.playlistmaker.search.ui.models.SearchState
 
 class SearchViewModel(
@@ -55,44 +59,46 @@ class SearchViewModel(
 
     fun observeState(): LiveData<SearchState> = mediatorStateLiveData
 
-    private fun searchRequest(newSearchText: String) {
-        if (newSearchText.isNotEmpty()) {
-            renderState(SearchState.Loading)
+    private fun searchRequest(newSearchText: String? = latestSearchText) {
+        if (newSearchText != null) {
+            if (newSearchText.isNotEmpty()) {
+                renderState(SearchState.Loading)
 
-            searchTracksUseCase.execute(newSearchText, object : SearchTracksUseCase.TracksConsumer {
-                override fun consume(foundTracks: List<Track>?, errorMessage: String?, code: Int) {
-                    val tracks = mutableListOf<Track>()
-                    if (foundTracks != null) {
-                        tracks.addAll(foundTracks)
+                searchTracksUseCase.execute(newSearchText, object : SearchTracksUseCase.TracksConsumer {
+                    override fun consume(foundTracks: List<Track>?, errorMessage: String?, code: Int) {
+                        val tracks = mutableListOf<Track>()
+                        if (foundTracks != null) {
+                            tracks.addAll(foundTracks)
+                        }
+
+                        when {
+                            errorMessage != null -> {
+                                renderState(
+                                    SearchState.Error(
+                                        errorMessage = application.getString(R.string.error_message),
+                                    )
+                                )
+                            }
+
+                            tracks.isEmpty() -> {
+                                renderState(
+                                    SearchState.Empty(
+                                        message = application.getString(R.string.nothing_found),
+                                    )
+                                )
+                            }
+
+                            else -> {
+                                renderState(
+                                    SearchState.Content(
+                                        tracks = tracks,
+                                    )
+                                )
+                            }
+                        }
                     }
-
-                    when {
-                        errorMessage != null -> {
-                            renderState(
-                                SearchState.Error(
-                                    errorMessage = application.getString(R.string.error_message),
-                                )
-                            )
-                        }
-
-                        tracks.isEmpty() -> {
-                            renderState(
-                                SearchState.Empty(
-                                    message = application.getString(R.string.nothing_found),
-                                )
-                            )
-                        }
-
-                        else -> {
-                            renderState(
-                                SearchState.Content(
-                                    tracks = tracks,
-                                )
-                            )
-                        }
-                    }
-                }
-            })
+                })
+            }
         }
     }
 

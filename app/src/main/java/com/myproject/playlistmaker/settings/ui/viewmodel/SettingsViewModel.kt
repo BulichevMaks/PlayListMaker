@@ -1,8 +1,7 @@
 package com.myproject.playlistmaker.settings.ui.viewmodel
 
 import android.content.res.Configuration
-import androidx.appcompat.app.AppCompatDelegate
-import androidx.lifecycle.*
+import androidx.lifecycle.AndroidViewModel
 import com.myproject.playlistmaker.App
 import com.myproject.playlistmaker.settings.domain.SettingsInteractor
 import org.koin.android.ext.android.getKoin

@@ -5,7 +5,7 @@ import com.myproject.playlistmaker.player.domain.api.PlayerInteractor
 import com.myproject.playlistmaker.player.domain.api.PlayerRepository
 import com.myproject.playlistmaker.player.domain.model.Track
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Locale
 
 class PlayerInteractorImpl(
     private val playerApi: PlayerApi,
