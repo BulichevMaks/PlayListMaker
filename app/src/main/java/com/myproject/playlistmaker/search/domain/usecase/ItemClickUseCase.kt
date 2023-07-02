@@ -1,6 +1,5 @@
 package com.myproject.playlistmaker.search.domain.usecase
 
-
 import com.myproject.playlistmaker.search.domain.api.SearchRepository
 import com.myproject.playlistmaker.search.domain.madel.Track
 
@@ -10,6 +9,7 @@ class ItemClickUseCase(private val searchRepository: SearchRepository) {
         historyTracks: ArrayList<Track>,
         position: Int
     ) {
+
         searchRepository.saveTrackToSharedPref(tracks[position])
 
         if (!historyTracks.contains(tracks[position])) {
@@ -23,5 +23,7 @@ class ItemClickUseCase(private val searchRepository: SearchRepository) {
             historyTracks.remove(tracks[position])
             historyTracks.add(tracks[position])
         }
+
+        searchRepository.writeTracksToPref(historyTracks)
     }
 }

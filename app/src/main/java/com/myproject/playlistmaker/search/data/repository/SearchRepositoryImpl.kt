@@ -47,5 +47,9 @@ class SearchRepositoryImpl(
         )
     }
 
+    override fun clearHistory() {
+        tracksSharedPrefStorage.clearHistory()
+    }
+
 
 }

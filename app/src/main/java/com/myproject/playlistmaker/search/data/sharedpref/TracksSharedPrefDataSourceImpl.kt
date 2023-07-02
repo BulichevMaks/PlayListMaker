@@ -12,7 +12,7 @@ const val TRACK_KEY = "track_key"
 class TracksSharedPrefDataSourceImpl(
     private val sharedPreferences: SharedPreferences,
     private val jsonLab: Gson
-    ): TracksSharedPrefStorage {
+) : TracksSharedPrefStorage {
 
     override fun save(track: TrackDataSource) {
         writeTrackToPref(sharedPreferences, track = track)
@@ -22,9 +22,9 @@ class TracksSharedPrefDataSourceImpl(
         return readFromPref(sharedPreferences)
     }
 
-override fun getTracksFromPref(): ArrayList<Track>? {
-    return readTracksFromPref(sharedPreferences)
-}
+    override fun getTracksFromPref(): ArrayList<Track>? {
+        return readTracksFromPref(sharedPreferences)
+    }
 
     override fun writeTracksToPref(tracks: ArrayList<TrackDataSource>) {
         writeTracksToPref(sharedPreferences, tracks)
@@ -42,15 +42,22 @@ override fun getTracksFromPref(): ArrayList<Track>? {
         return jsonLab.fromJson(json, TrackDataSource::class.java)
     }
 
-private fun readTracksFromPref(sharedPreferences: SharedPreferences): ArrayList<Track>? {
-    val json = sharedPreferences.getString(LIST_KEY, null) ?: return arrayListOf()
-    return jsonLab.fromJson(
-        json,
-        Array<Track>::class.java
-    )?.let { ArrayList(it.toList()) }
-}
+    override fun clearHistory() {
+        sharedPreferences.edit().clear().apply()
+    }
 
-    private fun writeTracksToPref(sharedPreferences: SharedPreferences, tracks: ArrayList<TrackDataSource>) {
+    private fun readTracksFromPref(sharedPreferences: SharedPreferences): ArrayList<Track>? {
+        val json = sharedPreferences.getString(LIST_KEY, null) ?: return arrayListOf()
+        return jsonLab.fromJson(
+            json,
+            Array<Track>::class.java
+        )?.let { ArrayList(it.toList()) }
+    }
+
+    private fun writeTracksToPref(
+        sharedPreferences: SharedPreferences,
+        tracks: ArrayList<TrackDataSource>
+    ) {
         val json = jsonLab.toJson(tracks)
         sharedPreferences.edit()
             .putString(LIST_KEY, json)

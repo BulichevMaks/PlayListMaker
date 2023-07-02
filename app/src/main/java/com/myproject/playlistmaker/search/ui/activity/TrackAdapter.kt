@@ -7,7 +7,7 @@ import com.myproject.playlistmaker.R
 import com.myproject.playlistmaker.search.domain.madel.Track
 
 
-class TrackAdapter(private val tracks: ArrayList<Track>) : RecyclerView.Adapter<TrackViewHolder>() {
+class TrackAdapter(var tracks: ArrayList<Track>) : RecyclerView.Adapter<TrackViewHolder>() {
 
     private var listener: ((Int) -> Unit)? = null
 

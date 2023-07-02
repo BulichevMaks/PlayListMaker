@@ -7,11 +7,11 @@ import com.myproject.playlistmaker.search.data.network.TrackApi
 import com.myproject.playlistmaker.search.data.repository.SearchRepositoryImpl
 import com.myproject.playlistmaker.search.data.sharedpref.TracksSharedPrefDataSourceImpl
 import com.myproject.playlistmaker.search.domain.api.SearchRepository
+import com.myproject.playlistmaker.search.domain.usecase.ClearHistoryUseCase
 import com.myproject.playlistmaker.search.domain.usecase.ItemClickUseCase
 import com.myproject.playlistmaker.search.domain.usecase.ItemHistoryClickUseCase
 import com.myproject.playlistmaker.search.domain.usecase.SearchTracksUseCase
 import com.myproject.playlistmaker.search.domain.usecase.ShowHistoryUseCase
-import com.myproject.playlistmaker.search.domain.usecase.StopActivityUseCase
 import com.myproject.playlistmaker.search.ui.viewmodel.SearchViewModel
 import java.util.concurrent.Executors
 import okhttp3.OkHttpClient
@@ -72,7 +72,7 @@ val searchModule = module {
     }
 
     single {
-        StopActivityUseCase(get())
+        ClearHistoryUseCase(get())
     }
 
     viewModel {

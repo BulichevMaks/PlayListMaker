@@ -10,4 +10,5 @@ interface SearchRepository {
     fun getTrackFromSharedPref(): Track
     fun readTracksFromSharedPref(): ArrayList<Track>?
     fun writeTracksToPref(tracks: ArrayList<Track>)
+    fun clearHistory()
 }

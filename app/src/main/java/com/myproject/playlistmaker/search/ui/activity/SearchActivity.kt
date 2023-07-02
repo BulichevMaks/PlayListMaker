@@ -21,7 +21,6 @@ import com.myproject.playlistmaker.search.ui.models.SearchState
 
 import com.myproject.playlistmaker.search.ui.viewmodel.SearchViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import kotlin.collections.ArrayList
 
 
 class SearchActivity : AppCompatActivity() {
@@ -32,8 +31,9 @@ class SearchActivity : AppCompatActivity() {
 
     private var tracks: ArrayList<Track> = ArrayList()
     private var historyTracks: ArrayList<Track> = ArrayList()
-    private val trackAdapter = TrackAdapter(tracks)
+    private var trackAdapter = TrackAdapter(tracks)
     private var historyAdapter = HistoryAdapter(historyTracks)
+
     private val handler = Handler(Looper.getMainLooper())
     private var isClickAllowed = true
     private var textWatcher: TextWatcher? = null
@@ -44,10 +44,15 @@ class SearchActivity : AppCompatActivity() {
         binding = ActivitySearchBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.recyclerView.layoutManager =
-            LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        vm.observeState().observe(this) { state ->
+            render(state)
+        }
 
-        binding.recyclerView.adapter = trackAdapter
+        vm.observeHistoryTracks().observe(this) { tracks ->
+            historyTracks.clear()
+            historyTracks.addAll(tracks)
+            historyAdapter.notifyDataSetChanged()
+        }
 
         binding.clearIcon.setOnClickListener {
             binding.inputEditText.setText("")
@@ -63,9 +68,10 @@ class SearchActivity : AppCompatActivity() {
         binding.buttonBack.setOnClickListener {
             finish()
         }
-
         binding.inputEditText.setOnFocusChangeListener { view, hasFocus ->
-            showHistory("")
+            if (vm.isHistoryShouldShow()) {
+                showHistory("")
+            }
         }
         binding.buttonRefresh.setOnClickListener {
 
@@ -83,10 +89,10 @@ class SearchActivity : AppCompatActivity() {
         }
         binding.clearHistoryButton.setOnClickListener {
             historyTracks.clear()
+            vm.clearHistory()
             binding.clearHistoryButton.visibility = View.GONE
-            binding.text.visibility = View.GONE
+            binding.youSearched.visibility = View.GONE
             historyAdapter.notifyDataSetChanged()
-
         }
 
         trackAdapter.setOnItemClickListener { position ->
@@ -98,19 +104,6 @@ class SearchActivity : AppCompatActivity() {
 
         inputTextHandle()
 
-        vm.observeHistoryTracks().observe(this) {
-            historyTracks = it
-            historyAdapter = HistoryAdapter(historyTracks)
-        }
-
-        vm.observeState().observe(this) {
-            render(it)
-        }
-    }
-
-    override fun onStop() {
-        super.onStop()
-        vm.writeTracksToPref(historyTracks)
     }
 
     private fun startIntent() {
@@ -127,7 +120,9 @@ class SearchActivity : AppCompatActivity() {
                     changedText = s?.toString() ?: ""
                 )
                 binding.clearIcon.visibility = clearButtonVisibility(s)
-                showHistory(s)
+                if (vm.isHistoryShouldShow()) {
+                    showHistory(s)
+                }
             }
             override fun afterTextChanged(s: Editable?) {
             }
@@ -137,37 +132,28 @@ class SearchActivity : AppCompatActivity() {
 
     fun showHistory(s: CharSequence?) {
 
-        vm.observeHistoryTracks().observe(this) { historyTracks ->
-            if (binding.inputEditText.hasFocus() && s?.isEmpty() == true && historyTracks.isNotEmpty()) {
-                binding.apply {
-                    placeholder.visibility = View.GONE
-                    buttonRefresh.visibility = View.GONE
-                    clearHistoryButton.visibility = View.VISIBLE
-                    text.visibility = View.VISIBLE
-                    recyclerView.layoutManager =
-                        LinearLayoutManager(this@SearchActivity, LinearLayoutManager.VERTICAL, true)
-                }
-            } else {
-                binding.apply {
-                    recyclerView.layoutManager =
-                        LinearLayoutManager(
-                            this@SearchActivity,
-                            LinearLayoutManager.VERTICAL,
-                            false
-                        )
-                    clearHistoryButton.visibility = View.GONE
-                    text.visibility = View.GONE
-                }
+        if (binding.inputEditText.hasFocus() && s?.isEmpty() == true && tracks.isNotEmpty()) {
+            binding.apply {
+                placeholder.visibility = View.GONE
+                buttonRefresh.visibility = View.GONE
+                clearHistoryButton.visibility = View.VISIBLE
+                youSearched.visibility = View.VISIBLE
+                recyclerView.visibility = View.VISIBLE
+                recyclerView.layoutManager =
+                    LinearLayoutManager(
+                        this@SearchActivity,
+                        LinearLayoutManager.VERTICAL,
+                        true
+                    )
+                binding.recyclerView.adapter = historyAdapter
             }
-
-            val adapter = HistoryAdapter(historyTracks)
-            adapter.setOnItemClickListener { position ->
-                vm.saveTrackToSharedPref(historyTracks, position)
-                startIntent()
-            }
-
-            binding.recyclerView.adapter = adapter
         }
+
+        historyAdapter.setOnItemClickListener { position ->
+            vm.saveTrackToSharedPref(historyTracks, position)
+            startIntent()
+        }
+
     }
 
     private fun render(state: SearchState) {
@@ -186,73 +172,61 @@ class SearchActivity : AppCompatActivity() {
             progressBar.visibility = View.VISIBLE
             recyclerView.visibility = View.GONE
             placeholder.visibility = View.GONE
+            clearHistoryButton.visibility = View.GONE
+            youSearched.visibility = View.GONE
         }
     }
 
     private fun showError(errorMessage: String) {
-        showMessage(errorMessage, Event.ERROR)
+        binding.apply {
+            progressBar.visibility = View.GONE
+            tracks.clear()
+            trackAdapter.notifyDataSetChanged()
+            placeholder.text = errorMessage
+            placeholder.visibility = View.VISIBLE
+            buttonRefresh.visibility = View.VISIBLE
+            placeholder.setDrawableTop(R.drawable.error_enternet)
+        }
     }
 
     private fun showServerError(errorMessage: String) {
-        showMessage(errorMessage, Event.SERVER_ERROR)
+        tracks.clear()
+        trackAdapter.notifyDataSetChanged()
+        binding.placeholder.text = errorMessage
+        binding.progressBar.visibility = View.GONE
     }
 
     private fun showEmpty(emptyMessage: String) {
-        showMessage(emptyMessage, Event.NOTHING_FOUND)
+        tracks.clear()
+        trackAdapter.notifyDataSetChanged()
+        binding.apply {
+            placeholder.text = emptyMessage
+            progressBar.visibility = View.GONE
+            placeholder.visibility = View.VISIBLE
+            buttonRefresh.visibility = View.GONE
+            placeholder.setDrawableTop(R.drawable.error_not_found)
+        }
     }
 
     private fun showContent(tracks: List<Track>) {
         this.tracks.clear()
         this.tracks.addAll(tracks)
-        trackAdapter.notifyDataSetChanged()
-        binding.recyclerView.layoutManager =
-            LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
-        binding.recyclerView.adapter = trackAdapter
-        showMessage("", Event.SUCCESS)
-    }
+        historyAdapter.notifyDataSetChanged()
 
-    private fun showMessage(text: String, event: Event) {
-        runOnUiThread {
-            when (event) {
-                Event.SUCCESS -> {
-                    binding.apply {
-                        progressBar.visibility = View.GONE
-                        placeholder.visibility = View.GONE
-                        buttonRefresh.visibility = View.GONE
-                        recyclerView.visibility = View.VISIBLE
-                    }
-                }
-                Event.NOTHING_FOUND -> {
-                    tracks.clear()
-                    trackAdapter.notifyDataSetChanged()
-                    binding.apply {
-                        placeholder.text = text
-                        progressBar.visibility = View.GONE
-                        placeholder.visibility = View.VISIBLE
-                        buttonRefresh.visibility = View.GONE
-                        placeholder.setDrawableTop(R.drawable.error_not_found)
-                    }
-                }
-                Event.SERVER_ERROR -> {
-                    tracks.clear()
-                    trackAdapter.notifyDataSetChanged()
-                    binding.placeholder.text = text
-                    binding.progressBar.visibility = View.GONE
-                }
-                Event.ERROR -> {
-                    binding.apply {
-                        progressBar.visibility = View.GONE
-                        tracks.clear()
-                        trackAdapter.notifyDataSetChanged()
-                        placeholder.text = text
-                        placeholder.visibility = View.VISIBLE
-                        buttonRefresh.visibility = View.VISIBLE
-                        placeholder.setDrawableTop(R.drawable.error_enternet)
-                    }
-                }
-            }
+        binding.recyclerView.layoutManager =
+            LinearLayoutManager(this@SearchActivity, LinearLayoutManager.VERTICAL, false)
+        binding.recyclerView.adapter = trackAdapter
+
+        binding.apply {
+            progressBar.visibility = View.GONE
+            placeholder.visibility = View.GONE
+            buttonRefresh.visibility = View.GONE
+            clearHistoryButton.visibility = View.GONE
+            youSearched.visibility = View.GONE
+            recyclerView.visibility = View.VISIBLE
         }
     }
+
 
     private fun clickDebounce(): Boolean {
         val current = isClickAllowed
