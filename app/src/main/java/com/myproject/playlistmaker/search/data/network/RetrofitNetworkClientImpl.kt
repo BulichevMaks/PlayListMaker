@@ -4,27 +4,14 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import com.myproject.playlistmaker.search.data.api.NetworkClient
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import java.net.SocketTimeoutException
 
-class RetrofitNetworkClientImpl(private val context: Context):
+class RetrofitNetworkClientImpl(
+    private val trackService: TrackApi,
+    private val context: Context):
     NetworkClient {
-    private val baseUrl = ITUNES_BASE_URL
-    private val interceptor = HttpLoggingInterceptor()
-    private val okHttpClient = OkHttpClient.Builder().addInterceptor(interceptor)
-        .build()
-    private val retrofit = Retrofit.Builder().client(okHttpClient)
-        .baseUrl(baseUrl)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-
-    private val trackService = retrofit.create(TrackApi::class.java)
-
     override fun doRequest(dto: Any): Response {
-        interceptor.level = HttpLoggingInterceptor.Level.BODY
+
         if (!isConnected()){
             return Response().apply { resultCode = -1 }
         }
@@ -37,8 +24,6 @@ class RetrofitNetworkClientImpl(private val context: Context):
                 println("${e.stackTrace}")
                 Response()
             }
-
-
         } else{
             Response().apply { resultCode = 400 }
         }
@@ -56,10 +41,6 @@ class RetrofitNetworkClientImpl(private val context: Context):
             }
         }
         return false
-    }
-
-    companion object{
-        private const val ITUNES_BASE_URL = "https://itunes.apple.com"
     }
 
 }

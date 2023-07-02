@@ -4,10 +4,9 @@ import android.media.MediaPlayer
 import com.myproject.playlistmaker.player.domain.api.PlayerApi
 import com.myproject.playlistmaker.player.domain.model.Track
 
-class PlayerHandler: PlayerApi {
+class PlayerHandler(private val mediaPlayer: MediaPlayer): PlayerApi {
 
     private var playerState = STATE_DEFAULT
-    private var mediaPlayer = MediaPlayer()
     override fun preparePlayer(track: Track) {
         mediaPlayer.setDataSource(track.previewUrl)
         mediaPlayer.prepareAsync()

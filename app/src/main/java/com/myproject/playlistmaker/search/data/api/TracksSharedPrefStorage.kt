@@ -8,6 +8,6 @@ interface TracksSharedPrefStorage {
     fun save(track: TrackDataSource)
     fun get(): TrackDataSource
     fun getTracksFromPref(): ArrayList<Track>?
-
+    fun clearHistory()
     fun writeTracksToPref(tracks: ArrayList<TrackDataSource>)
 }

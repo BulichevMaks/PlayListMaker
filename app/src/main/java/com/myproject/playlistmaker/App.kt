@@ -4,17 +4,32 @@ import android.app.Application
 import android.content.ComponentCallbacks
 import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatDelegate
-import com.myproject.playlistmaker.settings.di.Creator
+import com.myproject.playlistmaker.di.playerModule
+import com.myproject.playlistmaker.di.searchModule
+import com.myproject.playlistmaker.di.settingsModule
 import com.myproject.playlistmaker.settings.domain.SettingsInteractor
+import org.koin.android.ext.android.getKoin
+import org.koin.android.ext.koin.androidContext
+import org.koin.core.context.GlobalContext.startKoin
+
 class App : Application() {
 
     lateinit var settingsInteractor: SettingsInteractor
 
     override fun onCreate() {
         super.onCreate()
-        settingsInteractor = Creator.provideSettingsInteractor(this)
+
+        startKoin {
+            androidContext(this@App)
+            modules(
+                playerModule,
+                searchModule,
+                settingsModule
+            )
+        }
+
+        settingsInteractor = getKoin().get()
         settingsInteractor.useCurrentTheme()
-        instance = this@App
 
         val configuration = resources.configuration
         var currentNightMode = configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
@@ -44,10 +59,4 @@ class App : Application() {
         )
     }
 
-    companion object {
-        private lateinit var instance: App
-        fun getInstance(): App {
-            return instance
-        }
-    }
 }

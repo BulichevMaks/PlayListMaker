@@ -1,12 +1,17 @@
 package com.myproject.playlistmaker.settings.ui.viewmodel
 
 import android.content.res.Configuration
-import androidx.lifecycle.*
+import androidx.lifecycle.AndroidViewModel
 import com.myproject.playlistmaker.App
+import com.myproject.playlistmaker.settings.domain.SettingsInteractor
+import org.koin.android.ext.android.getKoin
 
-class SettingsViewModel(private val application: App) : AndroidViewModel(application) {
 
-    private val settingsInteractor = application.settingsInteractor
+class SettingsViewModel(
+    application: App
+) : AndroidViewModel(application) {
+
+    private val settingsInteractor: SettingsInteractor = application.getKoin().get()
 
     fun switchTheme(isChecked: Boolean) {
         settingsInteractor.switch(isChecked)
@@ -24,15 +29,4 @@ class SettingsViewModel(private val application: App) : AndroidViewModel(applica
         }
     }
 
-    companion object {
-        fun getViewModelFactory(application: App): ViewModelProvider.Factory =
-            object : ViewModelProvider.Factory {
-                @Suppress("UNCHECKED_CAST")
-                override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                    return SettingsViewModel(
-                        application = application
-                    ) as T
-                }
-            }
-    }
 }

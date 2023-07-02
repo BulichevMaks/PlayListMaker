@@ -3,25 +3,22 @@ package com.myproject.playlistmaker.player.ui.activity
 import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.myproject.playlistmaker.R
 import com.myproject.playlistmaker.databinding.PlayerViewBinding
 import com.myproject.playlistmaker.player.ui.viewmodel.PlayerViewModel
-import com.myproject.playlistmaker.player.ui.viewmodel.PlayerViewModelFactory
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class PlayerActivity : AppCompatActivity() {
 
-    private lateinit var vm: PlayerViewModel
+    private val vm: PlayerViewModel by viewModel()
     private lateinit var binding: PlayerViewBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = PlayerViewBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        vm = ViewModelProvider(this, PlayerViewModelFactory())[PlayerViewModel::class.java]
 
         val track = vm.getTrack()
         binding.apply {
@@ -44,37 +41,37 @@ class PlayerActivity : AppCompatActivity() {
         binding.buttonBack.setOnClickListener {
             finish()
         }
+
         vm.observeTimingLiveData().observe(this) {
             binding.trackTime.text = it
         }
+
+        vm.observeStateLiveData().observe(this) {
+            playButtonControl(it)
+        }
+
         binding.playButton.setOnClickListener {
             vm.playHandlerControl()
             vm.observeStateLiveData().observe(this) {
-                if (it) {
-                    if (isThemeNight()) {
-                        binding.playButton.setImageResource(R.drawable.ic_pause_button_night)
-                    } else {
-                        binding.playButton.setImageResource(R.drawable.ic_pause_button)
-                    }
-                } else {
-                    if (isThemeNight()) {
-                        binding.playButton.setImageResource(R.drawable.ic_play_button_night)
-                    } else {
-                        binding.playButton.setImageResource(R.drawable.ic_play_button)
-                    }
-                }
+                playButtonControl(it)
             }
         }
     }
 
-    override fun onPause() {
-        super.onPause()
-        vm.pausePlayer()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        vm.onDestroy()
+    private fun playButtonControl(state: Boolean) {
+        if (state) {
+            if (isThemeNight()) {
+                binding.playButton.setImageResource(R.drawable.ic_pause_button_night)
+            } else {
+                binding.playButton.setImageResource(R.drawable.ic_pause_button)
+            }
+        } else {
+            if (isThemeNight()) {
+                binding.playButton.setImageResource(R.drawable.ic_play_button_night)
+            } else {
+                binding.playButton.setImageResource(R.drawable.ic_play_button)
+            }
+        }
     }
 
     private fun isThemeNight(): Boolean {

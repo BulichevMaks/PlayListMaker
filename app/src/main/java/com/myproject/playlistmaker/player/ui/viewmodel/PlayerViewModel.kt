@@ -29,13 +29,16 @@ class PlayerViewModel(
         return playerInteractor.getTrack()
     }
 
-    fun pausePlayer() {
-        playerInteractor.pausePlayer()
-        playerStateLiveData.value = false
-    }
+//    fun pausePlayer() {
+//        playerInteractor.pausePlayer()
+//        playerStateLiveData.value = false
+//    }
 
-    fun onDestroy() {
+    public override fun onCleared() {
         playerInteractor.onDestroy()
+        super.onCleared()
+        mainThreadHandler?.removeCallbacksAndMessages(null)
+        mainThreadHandler = null
     }
 
     fun playHandlerControl() {

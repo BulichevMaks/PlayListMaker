@@ -70,4 +70,6 @@ dependencies {
     kapt "com.github.moxy-community:moxy-compiler:$moxyVersion"
 
     implementation 'androidx.databinding:databinding-runtime:7.0.3'
+
+    implementation "io.insert-koin:koin-android:3.3.0"
 }
