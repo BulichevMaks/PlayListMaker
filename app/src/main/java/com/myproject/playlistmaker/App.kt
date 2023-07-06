@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.ComponentCallbacks
 import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatDelegate
+import com.myproject.playlistmaker.di.mediaLibraryModule
 import com.myproject.playlistmaker.di.playerModule
 import com.myproject.playlistmaker.di.searchModule
 import com.myproject.playlistmaker.di.settingsModule
@@ -22,6 +23,7 @@ class App : Application() {
         startKoin {
             androidContext(this@App)
             modules(
+                mediaLibraryModule,
                 playerModule,
                 searchModule,
                 settingsModule
