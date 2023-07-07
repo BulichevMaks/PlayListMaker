@@ -1,10 +1,12 @@
 package com.myproject.playlistmaker.settings.ui.activity
 
+import android.content.ActivityNotFoundException
 import android.content.ComponentCallbacks
 import android.content.Intent
 import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.myproject.playlistmaker.R
 import com.myproject.playlistmaker.databinding.ActivitySettingsBinding
@@ -26,33 +28,57 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         binding.share.setOnClickListener {
-            val message = getString(R.string.course_link)
-            val sendIntent: Intent = Intent().apply {
-                this.action = Intent.ACTION_SEND
-                this.putExtra(Intent.EXTRA_TEXT, message)
-                this.type = "text/plain"
-            }
+            try {
+                val message = getString(R.string.course_link)
+                val sendIntent: Intent = Intent().apply {
+                    this.action = Intent.ACTION_SEND
+                    this.putExtra(Intent.EXTRA_TEXT, message)
+                    this.type = "text/plain"
+                }
 
-            val shareIntent = Intent.createChooser(sendIntent, null)
-            startActivity(shareIntent)
+                val shareIntent = Intent.createChooser(sendIntent, null)
+                startActivity(shareIntent)
+            } catch (e: ActivityNotFoundException) {
+                Toast.makeText(
+                    this,
+                    resources.getString(R.string.application_missing),
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
         }
 
         binding.support.setOnClickListener {
-            val message = getString(R.string.message_email)
-            val shareIntent = Intent().apply {
-                this.action = Intent.ACTION_SENDTO
-                this.data = Uri.parse("mailto:")
-                this.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.message_theme))
-                this.putExtra(Intent.EXTRA_EMAIL, arrayOf(getString(R.string.email)))
-                this.putExtra(Intent.EXTRA_TEXT, message)
+            try {
+                val message = getString(R.string.message_email)
+                val shareIntent = Intent().apply {
+                    this.action = Intent.ACTION_SENDTO
+                    this.data = Uri.parse("mailto:")
+                    this.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.message_theme))
+                    this.putExtra(Intent.EXTRA_EMAIL, arrayOf(getString(R.string.email)))
+                    this.putExtra(Intent.EXTRA_TEXT, message)
+                }
+                startActivity(shareIntent)
+            } catch (e: ActivityNotFoundException) {
+                Toast.makeText(
+                    this,
+                    resources.getString(R.string.application_missing),
+                    Toast.LENGTH_SHORT
+                ).show()
             }
-            startActivity(shareIntent)
         }
 
         binding.userAgreement.setOnClickListener {
-            val uri = Uri.parse(getString(R.string.practicum_offer_link))
-            val intent = Intent(Intent.ACTION_VIEW, uri)
-            startActivity(intent)
+            try {
+                val uri = Uri.parse(getString(R.string.practicum_offer_link))
+                val intent = Intent(Intent.ACTION_VIEW, uri)
+                startActivity(intent)
+            } catch (e: ActivityNotFoundException) {
+                Toast.makeText(
+                    this,
+                    resources.getString(R.string.application_missing),
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
         }
         binding.themeSwitcher.isChecked = vm.isDarkOn()
 
@@ -68,7 +94,8 @@ class SettingsActivity : AppCompatActivity() {
                 val newNightMode = newConfig.uiMode and Configuration.UI_MODE_NIGHT_MASK
                 if (currentNightMode != newNightMode) {
                     currentNightMode = newNightMode
-                    binding.themeSwitcher.isChecked = currentNightMode == Configuration.UI_MODE_NIGHT_YES
+                    binding.themeSwitcher.isChecked =
+                        currentNightMode == Configuration.UI_MODE_NIGHT_YES
                 }
             }
 

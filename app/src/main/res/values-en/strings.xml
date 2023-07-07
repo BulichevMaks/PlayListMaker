@@ -27,5 +27,6 @@ your internet connection</string>
     <string name="new_playlist">New playlist</string>
     <string name="favorite_tracks_empty">Your media library is empty</string>
     <string name="playlist_empty">You haven\'t created a single playlist</string>
+    <string name="application_missing">The application is missing</string>
 
 </resources>

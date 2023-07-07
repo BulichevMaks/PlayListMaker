@@ -41,7 +41,7 @@
         android:id="@+id/tabLayout"
         style="@style/MediaTabLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="48dp"
         app:tabIndicatorHeight="2dp"
         app:tabMode="fixed" />
 

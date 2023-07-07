@@ -133,7 +133,7 @@ class SearchActivity : AppCompatActivity() {
 
     fun showHistory(s: CharSequence?) {
 
-        if (binding.inputEditText.hasFocus() && s?.isEmpty() == true && tracks.isNotEmpty()) {
+        if (binding.inputEditText.hasFocus() && s?.isEmpty() == true && historyTracks.isNotEmpty()) {
             binding.apply {
                 placeholder.visibility = View.GONE
                 buttonRefresh.visibility = View.GONE
