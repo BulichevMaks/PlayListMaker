@@ -4,7 +4,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.myproject.playlistmaker.databinding.ActivityMainBinding
-import com.myproject.playlistmaker.medialibrary.ui.MediaLibraryActivity
+import com.myproject.playlistmaker.medialibrary.ui.activity.MediaLibraryActivity
 import com.myproject.playlistmaker.search.ui.activity.SearchActivity
 import com.myproject.playlistmaker.settings.ui.activity.SettingsActivity
 
