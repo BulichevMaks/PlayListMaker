@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".search.ui.activity.SearchActivity">
+    tools:context="com.myproject.playlistmaker.medialibrary.ui.fragment.MediaLibraryFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -19,11 +19,6 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/layout_height"
             android:orientation="horizontal">
-
-            <ImageView
-                android:id="@+id/buttonBack"
-                style="@style/ImageViewSettingsStyle"
-                app:srcCompat="@drawable/ic_arrow" />
 
             <TextView
                 android:id="@+id/textViewSearch"
