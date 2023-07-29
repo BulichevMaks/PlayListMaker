@@ -1,25 +1,35 @@
-package com.myproject.playlistmaker.player.ui.activity
+package com.myproject.playlistmaker.player.ui.fragment
 
 import android.content.res.Configuration
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.fragment.app.Fragment
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.myproject.playlistmaker.R
-import com.myproject.playlistmaker.databinding.PlayerViewBinding
+import com.myproject.playlistmaker.databinding.FragmentPlayerBinding
 import com.myproject.playlistmaker.player.ui.viewmodel.PlayerViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class PlayerActivity : AppCompatActivity() {
+
+class PlayerFragment : Fragment() {
 
     private val vm: PlayerViewModel by viewModel()
-    private lateinit var binding: PlayerViewBinding
+    private lateinit var binding: FragmentPlayerBinding
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = PlayerViewBinding.inflate(layoutInflater)
-        setContentView(binding.root)
 
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        binding = FragmentPlayerBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         val track = vm.getTrack()
         binding.apply {
             trackName.text = track.trackName
@@ -39,7 +49,7 @@ class PlayerActivity : AppCompatActivity() {
             .into(binding.imageAlbum)
 
         binding.buttonBack.setOnClickListener {
-            finish()
+            findNavController().navigateUp()
         }
 
         vm.observeTimingLiveData().observe(this) {

@@ -1,4 +1,4 @@
-package com.myproject.playlistmaker.settings.ui.activity
+package com.myproject.playlistmaker.settings.ui.fragment
 
 import android.content.ActivityNotFoundException
 import android.content.ComponentCallbacks
@@ -6,26 +6,30 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
+import androidx.fragment.app.Fragment
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import com.myproject.playlistmaker.R
-import com.myproject.playlistmaker.databinding.ActivitySettingsBinding
+import com.myproject.playlistmaker.databinding.FragmentSettingsBinding
 import com.myproject.playlistmaker.settings.ui.viewmodel.SettingsViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class SettingsActivity : AppCompatActivity() {
+class SettingsFragment : Fragment() {
 
-    private lateinit var binding: ActivitySettingsBinding
+    private lateinit var binding: FragmentSettingsBinding
     private val vm: SettingsViewModel by viewModel()
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
 
-        binding = ActivitySettingsBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-
-        binding.buttonBack.setOnClickListener {
-            finish()
-        }
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        binding = FragmentSettingsBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         binding.share.setOnClickListener {
             try {
@@ -40,7 +44,7 @@ class SettingsActivity : AppCompatActivity() {
                 startActivity(shareIntent)
             } catch (e: ActivityNotFoundException) {
                 Toast.makeText(
-                    this,
+                    requireContext(),
                     resources.getString(R.string.application_missing),
                     Toast.LENGTH_SHORT
                 ).show()
@@ -60,7 +64,7 @@ class SettingsActivity : AppCompatActivity() {
                 startActivity(shareIntent)
             } catch (e: ActivityNotFoundException) {
                 Toast.makeText(
-                    this,
+                    requireContext(),
                     resources.getString(R.string.application_missing),
                     Toast.LENGTH_SHORT
                 ).show()
@@ -74,7 +78,7 @@ class SettingsActivity : AppCompatActivity() {
                 startActivity(intent)
             } catch (e: ActivityNotFoundException) {
                 Toast.makeText(
-                    this,
+                    requireContext(),
                     resources.getString(R.string.application_missing),
                     Toast.LENGTH_SHORT
                 ).show()
@@ -89,7 +93,7 @@ class SettingsActivity : AppCompatActivity() {
 
         val configuration = resources.configuration
         var currentNightMode = configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
-        registerComponentCallbacks(object : ComponentCallbacks {
+        requireContext().registerComponentCallbacks(object : ComponentCallbacks {
             override fun onConfigurationChanged(newConfig: Configuration) {
                 val newNightMode = newConfig.uiMode and Configuration.UI_MODE_NIGHT_MASK
                 if (currentNightMode != newNightMode) {
@@ -103,6 +107,5 @@ class SettingsActivity : AppCompatActivity() {
         })
         binding.themeSwitcher.isChecked = vm.getCurrentTheme() == Configuration.UI_MODE_NIGHT_YES
     }
-
 
 }

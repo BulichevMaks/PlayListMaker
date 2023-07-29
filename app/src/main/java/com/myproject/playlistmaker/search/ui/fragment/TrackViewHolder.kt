@@ -1,4 +1,4 @@
-package com.myproject.playlistmaker.search.ui.activity
+package com.myproject.playlistmaker.search.ui.fragment
 
 
 import android.view.View
