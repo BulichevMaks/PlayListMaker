@@ -1,21 +1,22 @@
 package com.myproject.playlistmaker.search.ui.viewmodel
 
 import android.app.Application
-import android.os.Handler
-import android.os.Looper
-import android.os.SystemClock
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.myproject.playlistmaker.R
-import com.myproject.playlistmaker.search.domain.madel.Track
+import com.myproject.playlistmaker.search.domain.model.Track
 import com.myproject.playlistmaker.search.domain.usecase.ClearHistoryUseCase
 import com.myproject.playlistmaker.search.domain.usecase.ItemClickUseCase
 import com.myproject.playlistmaker.search.domain.usecase.ItemHistoryClickUseCase
 import com.myproject.playlistmaker.search.domain.usecase.SearchTracksUseCase
 import com.myproject.playlistmaker.search.domain.usecase.ShowHistoryUseCase
 import com.myproject.playlistmaker.search.ui.models.SearchState
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class SearchViewModel(
     private val itemClickUseCase: ItemClickUseCase,
@@ -28,10 +29,10 @@ class SearchViewModel(
 
     companion object {
         private const val SEARCH_DEBOUNCE_DELAY = 2000L
-        private val SEARCH_REQUEST_TOKEN = Any()
     }
 
-    private val handler = Handler(Looper.getMainLooper())
+
+    private var searchJob: Job? = null
 
     private var latestSearchText: String? = null
 
@@ -64,40 +65,44 @@ class SearchViewModel(
             if (newSearchText.isNotEmpty()) {
                 renderState(SearchState.Loading)
 
-                searchTracksUseCase.execute(newSearchText, object : SearchTracksUseCase.TracksConsumer {
-                    override fun consume(foundTracks: List<Track>?, errorMessage: String?, code: Int) {
-                        val tracks = mutableListOf<Track>()
-                        if (foundTracks != null) {
-                            tracks.addAll(foundTracks)
+                viewModelScope.launch {
+                    searchTracksUseCase
+                        .execute(newSearchText)
+                        .collect { pair ->
+                            processResult(pair.first, pair.second)
                         }
+                }
+            }
+        }
+    }
 
-                        when {
-                            errorMessage != null -> {
-                                renderState(
-                                    SearchState.Error(
-                                        errorMessage = application.getString(R.string.error_message),
-                                    )
-                                )
-                            }
+    private fun processResult(foundTracks: List<Track>?, errorMessage: String?) {
+        val tracks = mutableListOf<Track>()
+        if (foundTracks != null) {
+            tracks.addAll(foundTracks)
+        }
 
-                            tracks.isEmpty() -> {
-                                renderState(
-                                    SearchState.Empty(
-                                        message = application.getString(R.string.nothing_found),
-                                    )
-                                )
-                            }
-
-                            else -> {
-                                renderState(
-                                    SearchState.Content(
-                                        tracks = tracks,
-                                    )
-                                )
-                            }
-                        }
-                    }
-                })
+        when {
+            errorMessage != null -> {
+                renderState(
+                    SearchState.Error(
+                        errorMessage = application.getString(R.string.error_message),
+                    )
+                )
+            }
+            tracks.isEmpty() -> {
+                renderState(
+                    SearchState.Empty(
+                        message = application.getString(R.string.nothing_found),
+                    )
+                )
+            }
+            else -> {
+                renderState(
+                    SearchState.Content(
+                        tracks = tracks,
+                    )
+                )
             }
         }
     }
@@ -108,10 +113,6 @@ class SearchViewModel(
 
     private fun renderState(state: SearchState) {
         stateLiveData.postValue(state)
-    }
-
-    override fun onCleared() {
-        handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
     }
 
     fun saveTracksToHistory(
@@ -132,26 +133,20 @@ class SearchViewModel(
         }
 
         this.latestSearchText = changedText
-        handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
-        val searchRunnable = Runnable { searchRequest(changedText) }
-        val postTime = SystemClock.uptimeMillis() + SEARCH_DEBOUNCE_DELAY
-        handler.postAtTime(
-            searchRunnable,
-            SEARCH_REQUEST_TOKEN,
-            postTime,
-        )
+        searchJob?.cancel()
+        searchJob = viewModelScope.launch {
+            delay(SEARCH_DEBOUNCE_DELAY)
+            searchRequest(changedText)
+        }
     }
 
     fun searchDebounceRefresh(changedText: String) {
         this.latestSearchText = changedText
-        handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
-        val searchRunnable = Runnable { searchRequest(changedText) }
-        val postTime = SystemClock.uptimeMillis() + SEARCH_DEBOUNCE_DELAY
-        handler.postAtTime(
-            searchRunnable,
-            SEARCH_REQUEST_TOKEN,
-            postTime,
-        )
+        searchJob?.cancel()
+        searchJob = viewModelScope.launch {
+            delay(SEARCH_DEBOUNCE_DELAY)
+            searchRequest(changedText)
+        }
     }
 
     fun isHistoryShouldShow(): Boolean {

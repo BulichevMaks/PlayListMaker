@@ -4,7 +4,7 @@ import android.content.SharedPreferences
 import com.google.gson.Gson
 import com.myproject.playlistmaker.search.data.api.TracksSharedPrefStorage
 import com.myproject.playlistmaker.search.data.model.TrackDataSource
-import com.myproject.playlistmaker.search.domain.madel.Track
+import com.myproject.playlistmaker.search.domain.model.Track
 
 const val LIST_KEY = "key_for_list"
 const val TRACK_KEY = "track_key"

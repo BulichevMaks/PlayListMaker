@@ -4,4 +4,5 @@ interface SettingsInteractor {
     fun switch(isDarkOn: Boolean)
     fun isDarkOn(): Boolean
     fun useCurrentTheme()
+  fun isValueExists(): Boolean
 }

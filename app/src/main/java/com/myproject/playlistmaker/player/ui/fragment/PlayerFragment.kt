@@ -52,19 +52,16 @@ class PlayerFragment : Fragment() {
             findNavController().navigateUp()
         }
 
-        vm.observeTimingLiveData().observe(this) {
+        vm.observeTimingLiveData().observe(viewLifecycleOwner) {
             binding.trackTime.text = it
         }
 
-        vm.observeStateLiveData().observe(this) {
+        vm.observeStateLiveData().observe(viewLifecycleOwner) {
             playButtonControl(it)
         }
 
         binding.playButton.setOnClickListener {
             vm.playHandlerControl()
-            vm.observeStateLiveData().observe(this) {
-                playButtonControl(it)
-            }
         }
     }
 

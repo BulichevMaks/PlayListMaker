@@ -1,29 +1,27 @@
 package com.myproject.playlistmaker.search.domain.usecase
 
-
 import com.myproject.playlistmaker.search.domain.api.SearchRepository
-import com.myproject.playlistmaker.search.domain.madel.SearchResult
-import com.myproject.playlistmaker.search.domain.madel.Track
-import java.util.concurrent.ExecutorService
+import com.myproject.playlistmaker.search.domain.model.SearchResult
+import com.myproject.playlistmaker.search.domain.model.Track
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 class SearchTracksUseCase(
-    private val searchRepository: SearchRepository,
-    private val executor: ExecutorService
+    private val searchRepository: SearchRepository
 ) {
-    fun execute(input: String, consumer: TracksConsumer) {
-        executor.execute {
-            when (val resource = searchRepository.getTracksByName(input)) {
+
+    fun execute(input: String): Flow<Pair<List<Track>?, String?>> {
+        return searchRepository.getTracksByName(input).map { result ->
+            when(result) {
                 is SearchResult.Success -> {
-                    consumer.consume(resource.data, null, resource.code)
+                    Pair(result.data, null)
                 }
                 is SearchResult.Error -> {
-                    consumer.consume(null, resource.message, resource.code)
+                    Pair(null, result.message)
                 }
             }
         }
+
     }
 
-    interface TracksConsumer {
-        fun consume(tracks: List<Track>?, errorMessage: String?, code: Int)
-    }
 }

@@ -4,28 +4,28 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import com.myproject.playlistmaker.search.data.api.NetworkClient
-import java.net.SocketTimeoutException
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class RetrofitNetworkClientImpl(
     private val trackService: TrackApi,
     private val context: Context):
     NetworkClient {
-    override fun doRequest(dto: Any): Response {
+    override suspend fun doRequest(dto: Any): Response {
 
         if (!isConnected()){
             return Response().apply { resultCode = -1 }
         }
-        return if (dto is TracksSearchRequest) {
-            return try {
-                val result = trackService.search(dto.query).execute()
-                val body = result.body() ?: Response()
-                body.apply { resultCode = result.code() }
-            } catch (e: SocketTimeoutException) {
-                println("${e.stackTrace}")
-                Response()
+        if (dto !is TracksSearchRequest) {
+            return Response().apply { resultCode = 400 }
+        }
+        return withContext(Dispatchers.IO) {
+            try {
+                val response = trackService.search(dto.query)
+                response.apply { resultCode = 200 }
+            } catch (e: Throwable) {
+                Response().apply { resultCode = 500 }
             }
-        } else{
-            Response().apply { resultCode = 400 }
         }
     }
 

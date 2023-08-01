@@ -1,12 +1,14 @@
 package com.myproject.playlistmaker.player.ui.viewmodel
 
-import android.os.Handler
-import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.myproject.playlistmaker.player.domain.api.PlayerInteractor
 import com.myproject.playlistmaker.player.domain.model.Track
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class PlayerViewModel(
     private val playerInteractor: PlayerInteractor
@@ -16,9 +18,9 @@ class PlayerViewModel(
         playerInteractor.preparePlayer()
     }
 
-    private var mainThreadHandler: Handler? = null
-    var playerTimingLiveData = MutableLiveData<String>()
+    private var timerJob: Job? = null
 
+    var playerTimingLiveData = MutableLiveData<String>()
     fun observeTimingLiveData(): LiveData<String> = playerTimingLiveData
 
     var playerStateLiveData = MutableLiveData<Boolean>()
@@ -29,40 +31,27 @@ class PlayerViewModel(
         return playerInteractor.getTrack()
     }
 
-//    fun pausePlayer() {
-//        playerInteractor.pausePlayer()
-//        playerStateLiveData.value = false
-//    }
-
     public override fun onCleared() {
         playerInteractor.onDestroy()
         super.onCleared()
-        mainThreadHandler?.removeCallbacksAndMessages(null)
-        mainThreadHandler = null
+        timerJob?.cancel()
     }
 
     fun playHandlerControl() {
-        mainThreadHandler = Handler(Looper.getMainLooper())
-        mainThreadHandler?.postDelayed(
-            object : Runnable {
-                override fun run() {
-                    if (playerInteractor.isPlayerPlaying()) {
-                        playerTimingLiveData.value = playerInteractor.getTiming()
-                        playerStateLiveData.value = playerInteractor.isPlayerPlaying()
-                        mainThreadHandler?.postDelayed(
-                            this,
-                            REFRESH_LIST_DELAY_MILLIS,
-                        )
-                    }
-                }
-            },
-            REFRESH_LIST_DELAY_MILLIS
-        )
-
         playerInteractor.playerControl()
         playerStateLiveData.value = playerInteractor.isPlayerPlaying()
 
+        timerJob = viewModelScope.launch {
+            while (playerInteractor.isPlayerPlaying()) {
+                delay(REFRESH_LIST_DELAY_MILLIS)
+                playerTimingLiveData.postValue(playerInteractor.getTiming())
+                playerStateLiveData.postValue(playerInteractor.isPlayerPlaying())
+            }
+
+        }
+
         playerInteractor.playerCompletion {
+            timerJob?.cancel()
             playerTimingLiveData.value = "00:00"
             playerStateLiveData.value = false
         }
@@ -70,7 +59,7 @@ class PlayerViewModel(
     }
 
     companion object {
-        private const val REFRESH_LIST_DELAY_MILLIS = 500L
+        private const val REFRESH_LIST_DELAY_MILLIS = 300L
     }
 
 }

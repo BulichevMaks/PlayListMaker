@@ -1,7 +1,7 @@
 package com.myproject.playlistmaker.search.data
 
 import com.myproject.playlistmaker.search.data.model.TrackDataSource
-import com.myproject.playlistmaker.search.domain.madel.Track
+import com.myproject.playlistmaker.search.domain.model.Track
 import kotlin.collections.ArrayList
 
 object Mapper {

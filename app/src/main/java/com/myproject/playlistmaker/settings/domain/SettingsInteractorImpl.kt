@@ -10,4 +10,8 @@ class SettingsInteractorImpl(private val settingsRepository: SettingRepository):
     override fun useCurrentTheme() {
         settingsRepository.useCurrentTheme()
     }
+
+    override fun isValueExists(): Boolean {
+        return settingsRepository.isValueExists()
+    }
 }

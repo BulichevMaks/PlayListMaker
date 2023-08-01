@@ -1,6 +1,6 @@
 package com.myproject.playlistmaker.search.ui.models
 
-import com.myproject.playlistmaker.search.domain.madel.Track
+import com.myproject.playlistmaker.search.domain.model.Track
 
 
 sealed interface SearchState {
