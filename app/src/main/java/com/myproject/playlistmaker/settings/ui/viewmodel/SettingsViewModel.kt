@@ -35,8 +35,7 @@ class SettingsViewModel(
     }
 
     private fun isDarkThemeEnabled(): Boolean {
-        val configuration = getApplication<App>().resources.configuration
-        return configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
+        return getApplication<App>().getCurrentNightMode() == Configuration.UI_MODE_NIGHT_YES
     }
 
 }

@@ -131,13 +131,7 @@ class SearchViewModel(
         if (latestSearchText == changedText) {
             return
         }
-
-        this.latestSearchText = changedText
-        searchJob?.cancel()
-        searchJob = viewModelScope.launch {
-            delay(SEARCH_DEBOUNCE_DELAY)
-            searchRequest(changedText)
-        }
+        searchDebounceRefresh(changedText)
     }
 
     fun searchDebounceRefresh(changedText: String) {

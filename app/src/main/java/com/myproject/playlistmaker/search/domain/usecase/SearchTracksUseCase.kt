@@ -13,12 +13,8 @@ class SearchTracksUseCase(
     fun execute(input: String): Flow<Pair<List<Track>?, String?>> {
         return searchRepository.getTracksByName(input).map { result ->
             when(result) {
-                is SearchResult.Success -> {
-                    Pair(result.data, null)
-                }
-                is SearchResult.Error -> {
-                    Pair(null, result.message)
-                }
+                is SearchResult.Success -> result.data to null
+                is SearchResult.Error -> null to result.message
             }
         }
 

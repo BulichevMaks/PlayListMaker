@@ -16,7 +16,7 @@ class SettingsStorageImpl(private val sharedPreferences: SharedPreferences): Set
     }
 
     override fun isValueExists(): Boolean {
-        return sharedPreferences.contains("is_dark_on")
+        return sharedPreferences.contains(IS_DARK_ON)
     }
 
     companion object{
