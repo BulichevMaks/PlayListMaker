@@ -3,12 +3,12 @@ package com.myproject.playlistmaker
 import android.app.Application
 import android.content.ComponentCallbacks
 import android.content.res.Configuration
-import androidx.appcompat.app.AppCompatDelegate
 import com.myproject.playlistmaker.di.mediaLibraryModule
 import com.myproject.playlistmaker.di.playerModule
 import com.myproject.playlistmaker.di.searchModule
 import com.myproject.playlistmaker.di.settingsModule
 import com.myproject.playlistmaker.settings.domain.SettingsInteractor
+import com.myproject.playlistmaker.settings.ui.viewmodel.SettingsViewModel
 import org.koin.android.ext.android.getKoin
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.GlobalContext.startKoin
@@ -16,6 +16,7 @@ import org.koin.core.context.GlobalContext.startKoin
 class App : Application() {
 
     lateinit var settingsInteractor: SettingsInteractor
+    lateinit var vm: SettingsViewModel
 
     override fun onCreate() {
         super.onCreate()
@@ -31,6 +32,7 @@ class App : Application() {
         }
 
         settingsInteractor = getKoin().get()
+        vm = getKoin().get()
         settingsInteractor.useCurrentTheme()
 
         val configuration = resources.configuration
@@ -41,7 +43,7 @@ class App : Application() {
                 val newNightMode = newConfig.uiMode and Configuration.UI_MODE_NIGHT_MASK
                 if (currentNightMode != newNightMode) {
                     currentNightMode = newNightMode
-                    switchTheme(currentNightMode)
+                    vm.switchTheme(newNightMode == Configuration.UI_MODE_NIGHT_YES)//на этой строке ошибка: Unresolved reference: vm
                 }
             }
 
@@ -49,16 +51,9 @@ class App : Application() {
         })
 
     }
-
-    fun switchTheme(darkThemeEnabled: Int) {
-
-        AppCompatDelegate.setDefaultNightMode(
-            if (darkThemeEnabled == Configuration.UI_MODE_NIGHT_YES) {
-                AppCompatDelegate.MODE_NIGHT_YES
-            } else {
-                AppCompatDelegate.MODE_NIGHT_NO
-            }
-        )
+    fun getCurrentNightMode(): Int {
+        val configuration = resources.configuration
+        return configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
     }
 
 }

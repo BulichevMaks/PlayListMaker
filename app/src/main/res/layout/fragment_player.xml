@@ -107,7 +107,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="13dp"
-        android:text="0:00"
+        android:text="00:00"
         android:theme="@style/TextPlayer"
         android:textSize="14sp"
         app:layout_constraintEnd_toStartOf="@id/right_guideline"

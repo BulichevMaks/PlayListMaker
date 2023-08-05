@@ -33,11 +33,9 @@ class PlayerHandler(private val mediaPlayer: MediaPlayer): PlayerApi {
         when (playerState) {
             STATE_PLAYING -> {
                 pausePlayer()
-
             }
             STATE_PREPARED, STATE_PAUSED -> {
                 startPlayer()
-
             }
         }
     }

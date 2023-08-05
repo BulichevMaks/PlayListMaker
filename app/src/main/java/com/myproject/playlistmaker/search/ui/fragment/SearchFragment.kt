@@ -2,8 +2,6 @@ package com.myproject.playlistmaker.search.ui.fragment
 
 import android.content.Context
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import androidx.fragment.app.Fragment
@@ -13,14 +11,17 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.myproject.playlistmaker.R
 import com.myproject.playlistmaker.databinding.FragmentSearchBinding
-import com.myproject.playlistmaker.search.domain.madel.Track
+import com.myproject.playlistmaker.search.domain.model.Track
 import com.myproject.playlistmaker.search.ui.models.SearchState
 import com.myproject.playlistmaker.search.ui.viewmodel.SearchViewModel
 import java.util.ArrayList
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
@@ -38,8 +39,6 @@ class SearchFragment : Fragment() {
     private var historyTracks: ArrayList<Track> = ArrayList()
     private var trackAdapter = TrackAdapter(tracks)
     private var historyAdapter = HistoryAdapter(historyTracks)
-
-    private val handler = Handler(Looper.getMainLooper())
     private var isClickAllowed = true
     private var textWatcher: TextWatcher? = null
 
@@ -54,13 +53,11 @@ class SearchFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
-
-        vm.observeState().observe(this) { state ->
+        vm.observeState().observe(viewLifecycleOwner) { state ->
             render(state)
         }
 
-        vm.observeHistoryTracks().observe(this) { tracks ->
+        vm.observeHistoryTracks().observe(viewLifecycleOwner) { tracks ->
             historyTracks.clear()
             historyTracks.addAll(tracks)
             historyAdapter.notifyDataSetChanged()
@@ -92,7 +89,7 @@ class SearchFragment : Fragment() {
                 placeholder.visibility = View.GONE
                 buttonRefresh.visibility = View.GONE
             }
-            vm.observeState().observe(this) {
+            vm.observeState().observe(viewLifecycleOwner) {
                 render(it)
             }
         }
@@ -238,7 +235,10 @@ class SearchFragment : Fragment() {
         val current = isClickAllowed
         if (isClickAllowed) {
             isClickAllowed = false
-            handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
+            lifecycleScope.launch {
+                delay(CLICK_DEBOUNCE_DELAY)
+                isClickAllowed = true
+            }
         }
         return current
     }
@@ -263,6 +263,5 @@ class SearchFragment : Fragment() {
             View.VISIBLE
         }
     }
-
 
 }

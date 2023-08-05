@@ -14,6 +14,10 @@ class SettingRepositoryImpl(private val storage: SettingsStorage): SettingReposi
         return storage.isDarkOn()
     }
 
+    override fun isValueExists(): Boolean {
+        return storage.isValueExists()
+    }
+
     override fun useCurrentTheme() {
         AppCompatDelegate.setDefaultNightMode(
             if (isDarkOn()) {

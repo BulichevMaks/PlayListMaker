@@ -1,4 +1,4 @@
-package com.myproject.playlistmaker.search.domain.madel
+package com.myproject.playlistmaker.search.domain.model
 
 import java.io.Serializable
 

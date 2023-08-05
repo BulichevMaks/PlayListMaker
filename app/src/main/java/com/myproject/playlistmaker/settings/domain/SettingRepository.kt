@@ -4,4 +4,5 @@ interface SettingRepository {
     fun switch(darkThemeEnabled: Boolean)
     fun isDarkOn(): Boolean
     fun useCurrentTheme()
+    fun isValueExists(): Boolean
 }

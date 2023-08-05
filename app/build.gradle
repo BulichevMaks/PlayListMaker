@@ -34,6 +34,7 @@ android {
     buildFeatures {
         viewBinding true
     }
+
     dataBinding {
         enabled = true
     }
@@ -44,7 +45,8 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.9.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    implementation 'androidx.core:core-ktx:+'
+    implementation 'androidx.core:core-ktx:1.10.1'
+
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
@@ -72,18 +74,19 @@ dependencies {
     implementation "com.github.moxy-community:moxy-android:$moxyVersion"
     kapt "com.github.moxy-community:moxy-compiler:$moxyVersion"
 
-    implementation 'androidx.databinding:databinding-runtime:8.0.2'
+    implementation 'androidx.databinding:databinding-runtime:8.1.0'
 
-    implementation "io.insert-koin:koin-android:3.3.0"
+    implementation "io.insert-koin:koin-android:3.4.1"
 
-    def fragment_version = "1.6.0"
+    def fragment_version = "1.6.1"
     implementation "androidx.fragment:fragment:$fragment_version"
-    implementation 'androidx.fragment:fragment-ktx:1.6.0'
+
 
     implementation "androidx.viewpager2:viewpager2:1.0.0"
 
-    implementation "androidx.navigation:navigation-fragment-ktx:2.5.3"
-    implementation "androidx.navigation:navigation-ui-ktx:2.5.3"
-    implementation "androidx.fragment:fragment-ktx:1.5.6"
+    implementation "androidx.navigation:navigation-fragment-ktx:2.6.0"
+    implementation "androidx.navigation:navigation-ui-ktx:2.6.0"
+    implementation "androidx.fragment:fragment-ktx:1.6.1"
 
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4")
 }

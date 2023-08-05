@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.myproject.playlistmaker.R
-import com.myproject.playlistmaker.search.domain.madel.Track
+import com.myproject.playlistmaker.search.domain.model.Track
 
 
 class HistoryAdapter(private val tracks: ArrayList<Track>): RecyclerView.Adapter<TrackViewHolder>(){

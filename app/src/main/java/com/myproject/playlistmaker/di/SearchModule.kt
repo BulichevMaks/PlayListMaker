@@ -60,11 +60,7 @@ val searchModule = module {
     }
 
     single {
-        Executors.newCachedThreadPool()
-    }
-
-    single {
-        SearchTracksUseCase(get(), get())
+        SearchTracksUseCase(get())
     }
 
     single {
