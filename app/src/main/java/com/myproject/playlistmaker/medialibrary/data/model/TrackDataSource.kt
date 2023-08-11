@@ -1,8 +1,8 @@
-package com.myproject.playlistmaker.search.domain.model
+package com.myproject.playlistmaker.medialibrary.data.model
 
 import java.io.Serializable
 
-data class Track(
+data class TrackDataSource(
     val id: Int,
     val trackId: Long,
     val trackName: String,
@@ -15,3 +15,4 @@ data class Track(
     val primaryGenreName: String,
     val country: String,
 ) : Serializable
+

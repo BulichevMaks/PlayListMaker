@@ -13,7 +13,6 @@ import com.myproject.playlistmaker.search.domain.usecase.ItemHistoryClickUseCase
 import com.myproject.playlistmaker.search.domain.usecase.SearchTracksUseCase
 import com.myproject.playlistmaker.search.domain.usecase.ShowHistoryUseCase
 import com.myproject.playlistmaker.search.ui.viewmodel.SearchViewModel
-import java.util.concurrent.Executors
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.android.ext.koin.androidContext

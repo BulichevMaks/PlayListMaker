@@ -60,8 +60,32 @@ class PlayerFragment : Fragment() {
             playButtonControl(it)
         }
 
+        vm.observeFavoriteButtonStateLiveData().observe(viewLifecycleOwner) {
+            favoriteButtonStateControl(it)
+        }
+
         binding.playButton.setOnClickListener {
             vm.playHandlerControl()
+        }
+
+        binding.favoriteButton.setOnClickListener {
+            vm.favoriteButtonControl()
+        }
+    }
+
+    private fun favoriteButtonStateControl(state: Boolean) {
+        if (state) {
+            if (isThemeNight()) {
+                binding.favoriteButton.setImageResource(R.drawable.ic_favorite_button_enabled_night)
+            } else {
+                binding.favoriteButton.setImageResource(R.drawable.ic_favorite_button_enabled)
+            }
+        } else {
+            if (isThemeNight()) {
+                binding.favoriteButton.setImageResource(R.drawable.ic_favorite_button_night)
+            } else {
+                binding.favoriteButton.setImageResource(R.drawable.ic_favorite_button)
+            }
         }
     }
 

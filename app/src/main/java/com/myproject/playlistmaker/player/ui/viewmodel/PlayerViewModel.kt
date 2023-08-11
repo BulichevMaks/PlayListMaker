@@ -19,22 +19,50 @@ class PlayerViewModel(
     }
 
     private var timerJob: Job? = null
+    private var favoriteEnabled = false
 
     var playerTimingLiveData = MutableLiveData<String>()
     fun observeTimingLiveData(): LiveData<String> = playerTimingLiveData
 
-    var playerStateLiveData = MutableLiveData<Boolean>()
 
+    var playerStateLiveData = MutableLiveData<Boolean>()
     fun observeStateLiveData(): LiveData<Boolean> = playerStateLiveData
 
+
+    var favoriteButtonStateLiveData = MutableLiveData<Boolean>()
+    fun observeFavoriteButtonStateLiveData(): LiveData<Boolean> = favoriteButtonStateLiveData
+
     fun getTrack(): Track {
-        return playerInteractor.getTrack()
+        val track = playerInteractor.getTrack()
+        viewModelScope.launch {
+            if (playerInteractor.isTrackFavorite(trackId = track.trackId)) {
+                favoriteButtonStateLiveData.value = true
+                favoriteEnabled = true
+            }
+        }
+        return track
     }
 
     public override fun onCleared() {
         playerInteractor.onDestroy()
         super.onCleared()
         timerJob?.cancel()
+    }
+
+    fun favoriteButtonControl() {
+        if(favoriteEnabled) {
+            favoriteButtonStateLiveData.value = false
+            favoriteEnabled = false
+            viewModelScope.launch {
+                playerInteractor.deleteById(playerInteractor.getTrack().trackId)
+            }
+        } else {
+            favoriteButtonStateLiveData.value = true
+            favoriteEnabled = true
+            viewModelScope.launch {
+                playerInteractor.saveTrackToDB()
+            }
+        }
     }
 
     fun playHandlerControl() {
