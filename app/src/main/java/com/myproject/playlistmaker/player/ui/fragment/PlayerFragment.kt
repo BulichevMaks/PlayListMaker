@@ -52,15 +52,15 @@ class PlayerFragment : Fragment() {
             findNavController().navigateUp()
         }
 
-        vm.observeTimingLiveData().observe(viewLifecycleOwner) {
+        vm.playerTimingLiveData.observe(viewLifecycleOwner) {
             binding.trackTime.text = it
         }
 
-        vm.observeStateLiveData().observe(viewLifecycleOwner) {
+        vm.playerStateLiveData.observe(viewLifecycleOwner) {
             playButtonControl(it)
         }
 
-        vm.observeFavoriteButtonStateLiveData().observe(viewLifecycleOwner) {
+        vm.favoriteButtonStateLiveData.observe(viewLifecycleOwner) {
             favoriteButtonStateControl(it)
         }
 

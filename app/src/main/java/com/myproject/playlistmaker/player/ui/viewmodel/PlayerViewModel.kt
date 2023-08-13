@@ -21,22 +21,22 @@ class PlayerViewModel(
     private var timerJob: Job? = null
     private var favoriteEnabled = false
 
-    var playerTimingLiveData = MutableLiveData<String>()
-    fun observeTimingLiveData(): LiveData<String> = playerTimingLiveData
+    private var _playerTimingLiveData = MutableLiveData<String>()
+    val playerTimingLiveData: LiveData<String> = _playerTimingLiveData
 
 
-    var playerStateLiveData = MutableLiveData<Boolean>()
-    fun observeStateLiveData(): LiveData<Boolean> = playerStateLiveData
+    private var _playerStateLiveData = MutableLiveData<Boolean>()
+    val playerStateLiveData: LiveData<Boolean> = _playerStateLiveData
 
 
-    var favoriteButtonStateLiveData = MutableLiveData<Boolean>()
-    fun observeFavoriteButtonStateLiveData(): LiveData<Boolean> = favoriteButtonStateLiveData
+    private var _favoriteButtonStateLiveData = MutableLiveData<Boolean>()
+    val favoriteButtonStateLiveData: LiveData<Boolean> = _favoriteButtonStateLiveData
 
     fun getTrack(): Track {
         val track = playerInteractor.getTrack()
         viewModelScope.launch {
             if (playerInteractor.isTrackFavorite(trackId = track.trackId)) {
-                favoriteButtonStateLiveData.value = true
+                _favoriteButtonStateLiveData.value = true
                 favoriteEnabled = true
             }
         }
@@ -51,13 +51,13 @@ class PlayerViewModel(
 
     fun favoriteButtonControl() {
         if(favoriteEnabled) {
-            favoriteButtonStateLiveData.value = false
+            _favoriteButtonStateLiveData.value = false
             favoriteEnabled = false
             viewModelScope.launch {
                 playerInteractor.deleteById(playerInteractor.getTrack().trackId)
             }
         } else {
-            favoriteButtonStateLiveData.value = true
+            _favoriteButtonStateLiveData.value = true
             favoriteEnabled = true
             viewModelScope.launch {
                 playerInteractor.saveTrackToDB()
@@ -67,21 +67,21 @@ class PlayerViewModel(
 
     fun playHandlerControl() {
         playerInteractor.playerControl()
-        playerStateLiveData.value = playerInteractor.isPlayerPlaying()
+        _playerStateLiveData.value = playerInteractor.isPlayerPlaying()
 
         timerJob = viewModelScope.launch {
             while (playerInteractor.isPlayerPlaying()) {
                 delay(REFRESH_LIST_DELAY_MILLIS)
-                playerTimingLiveData.postValue(playerInteractor.getTiming())
-                playerStateLiveData.postValue(playerInteractor.isPlayerPlaying())
+                _playerTimingLiveData.postValue(playerInteractor.getTiming())
+                _playerStateLiveData.postValue(playerInteractor.isPlayerPlaying())
             }
 
         }
 
         playerInteractor.playerCompletion {
             timerJob?.cancel()
-            playerTimingLiveData.value = "00:00"
-            playerStateLiveData.value = false
+            _playerTimingLiveData.value = "00:00"
+            _playerStateLiveData.value = false
         }
 
     }
