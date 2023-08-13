@@ -3,11 +3,13 @@ package com.myproject.playlistmaker.medialibrary.ui
 import com.myproject.playlistmaker.medialibrary.domain.model.Track
 
 sealed interface FavoriteState {
+
+    object Loading: FavoriteState
     data class Content(
         val tracks: List<Track>
-    ) : FavoriteState
+    ): FavoriteState
 
     data class Empty(
         val message: String
-    ) : FavoriteState
+    ): FavoriteState
 }

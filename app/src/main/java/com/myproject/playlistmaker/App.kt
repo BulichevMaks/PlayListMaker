@@ -3,10 +3,12 @@ package com.myproject.playlistmaker
 import android.app.Application
 import android.content.ComponentCallbacks
 import android.content.res.Configuration
+import com.myproject.playlistmaker.di.dbModule
 import com.myproject.playlistmaker.di.mediaLibraryModule
 import com.myproject.playlistmaker.di.playerModule
 import com.myproject.playlistmaker.di.searchModule
 import com.myproject.playlistmaker.di.settingsModule
+import com.myproject.playlistmaker.di.sharedPreferencesModule
 import com.myproject.playlistmaker.settings.domain.SettingsInteractor
 import com.myproject.playlistmaker.settings.ui.viewmodel.SettingsViewModel
 import org.koin.android.ext.android.getKoin
@@ -24,10 +26,12 @@ class App : Application() {
         startKoin {
             androidContext(this@App)
             modules(
+                sharedPreferencesModule,
                 mediaLibraryModule,
                 playerModule,
                 searchModule,
-                settingsModule
+                settingsModule,
+                dbModule
             )
         }
 
@@ -43,7 +47,7 @@ class App : Application() {
                 val newNightMode = newConfig.uiMode and Configuration.UI_MODE_NIGHT_MASK
                 if (currentNightMode != newNightMode) {
                     currentNightMode = newNightMode
-                    vm.switchTheme(newNightMode == Configuration.UI_MODE_NIGHT_YES)//на этой строке ошибка: Unresolved reference: vm
+                    vm.switchTheme(newNightMode == Configuration.UI_MODE_NIGHT_YES)
                 }
             }
 

@@ -13,6 +13,7 @@ object Mapper {
         for (track in tracks) {
             val transformedTrack = TrackDataSource(
                 id = track.id,
+                trackId = track.trackId,
                 trackName = track.trackName,
                 artistName = track.artistName,
                 trackTimeMillis = track.trackTimeMillis,
@@ -32,6 +33,7 @@ object Mapper {
     fun transformTrackDataSourceToDomainModels(track: Track): TrackDataSource {
         return TrackDataSource(
             id = track.id,
+            trackId = track.trackId,
             trackName = track.trackName,
             artistName = track.artistName,
             trackTimeMillis = track.trackTimeMillis,
@@ -46,6 +48,7 @@ object Mapper {
     fun transformTrackDataSourceToDomainModels(track: TrackDataSource): Track {
         return Track(
             id = track.id,
+            trackId = track.trackId,
             trackName = track.trackName,
             artistName = track.artistName,
             trackTimeMillis = track.trackTimeMillis,

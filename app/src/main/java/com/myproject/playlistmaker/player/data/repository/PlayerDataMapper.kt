@@ -1,5 +1,6 @@
 package com.myproject.playlistmaker.player.data.repository
 
+import com.myproject.playlistmaker.db.room.model.TrackEntity
 import com.myproject.playlistmaker.player.data.model.TrackDataSource
 import com.myproject.playlistmaker.player.domain.model.Track
 import java.text.SimpleDateFormat
@@ -10,6 +11,7 @@ object PlayerDataMapper {
     fun transformTrackDataSourceToDomainModels(track: TrackDataSource): Track {
         return Track(
             id = track.id,
+            trackId = track.trackId,
             trackName = track.trackName,
             artistName = track.artistName,
             trackTimeMillis = track.trackTimeMillis?.let {
@@ -23,6 +25,23 @@ object PlayerDataMapper {
             country = track.country
         )
     }
+
+    fun transformTrackToDBaseModel(track: TrackDataSource): TrackEntity {
+        return TrackEntity(
+            id = track.id,
+            trackId = track.trackId,
+            trackName = track.trackName,
+            artistName = track.artistName,
+            trackTimeMillis = track.trackTimeMillis,
+            artworkUrl100 = track.artworkUrl100,
+            previewUrl = track.previewUrl,
+            collectionName = track.collectionName,
+            releaseDate = track.releaseDate,
+            primaryGenreName = track.primaryGenreName,
+            country = track.country
+        )
+    }
+
     private fun calendar(track: TrackDataSource): String? {
         val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US)
         val date = track.releaseDate.let {

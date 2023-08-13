@@ -45,4 +45,16 @@ class PlayerInteractorImpl(
             onComplete()
         }
     }
+
+    override suspend fun saveTrackToDB() {
+        playerRepository.saveTrackToDB()
+    }
+
+    override suspend fun isTrackFavorite(trackId: Long): Boolean {
+        return playerRepository.isTrackFavorite(trackId)
+    }
+
+    override suspend fun deleteById(trackId: Long) {
+        playerRepository.deleteById(trackId)
+    }
 }

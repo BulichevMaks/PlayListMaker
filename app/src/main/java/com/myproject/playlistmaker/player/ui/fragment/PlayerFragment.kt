@@ -52,16 +52,40 @@ class PlayerFragment : Fragment() {
             findNavController().navigateUp()
         }
 
-        vm.observeTimingLiveData().observe(viewLifecycleOwner) {
+        vm.playerTimingLiveData.observe(viewLifecycleOwner) {
             binding.trackTime.text = it
         }
 
-        vm.observeStateLiveData().observe(viewLifecycleOwner) {
+        vm.playerStateLiveData.observe(viewLifecycleOwner) {
             playButtonControl(it)
+        }
+
+        vm.favoriteButtonStateLiveData.observe(viewLifecycleOwner) {
+            favoriteButtonStateControl(it)
         }
 
         binding.playButton.setOnClickListener {
             vm.playHandlerControl()
+        }
+
+        binding.favoriteButton.setOnClickListener {
+            vm.favoriteButtonControl()
+        }
+    }
+
+    private fun favoriteButtonStateControl(state: Boolean) {
+        if (state) {
+            if (isThemeNight()) {
+                binding.favoriteButton.setImageResource(R.drawable.ic_favorite_button_enabled_night)
+            } else {
+                binding.favoriteButton.setImageResource(R.drawable.ic_favorite_button_enabled)
+            }
+        } else {
+            if (isThemeNight()) {
+                binding.favoriteButton.setImageResource(R.drawable.ic_favorite_button_night)
+            } else {
+                binding.favoriteButton.setImageResource(R.drawable.ic_favorite_button)
+            }
         }
     }
 

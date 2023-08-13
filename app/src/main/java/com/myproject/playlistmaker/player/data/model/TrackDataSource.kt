@@ -4,6 +4,7 @@ import java.io.Serializable
 
 data class TrackDataSource(
     val id: Int,
+    val trackId: Long,
     val trackName: String,
     val artistName: String,
     val trackTimeMillis: String?,

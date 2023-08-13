@@ -1,6 +1,5 @@
 package com.myproject.playlistmaker.di
 
-import android.content.Context
 import android.media.MediaPlayer
 import com.google.gson.Gson
 import com.myproject.playlistmaker.player.data.PlayerHandler
@@ -12,18 +11,10 @@ import com.myproject.playlistmaker.player.domain.api.PlayerInteractor
 import com.myproject.playlistmaker.player.domain.api.PlayerRepository
 import com.myproject.playlistmaker.player.domain.usecase.PlayerInteractorImpl
 import com.myproject.playlistmaker.player.ui.viewmodel.PlayerViewModel
-import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
-const val PREFERENCES = "preferences"
-
 val playerModule = module {
-
-    single {
-        androidContext()
-            .getSharedPreferences(PREFERENCES, Context.MODE_PRIVATE)
-    }
 
     factory { Gson() }
 
@@ -44,7 +35,7 @@ val playerModule = module {
     }
 
     factory<PlayerRepository> {
-        PlayerRepositoryImpl(get())
+        PlayerRepositoryImpl(get(), get())
     }
 
     factory<PlayerInteractor> {
