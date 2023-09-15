@@ -6,7 +6,7 @@ import com.myproject.playlistmaker.medialibrary.data.api.FavoriteSharedPrefDataS
 import com.myproject.playlistmaker.medialibrary.data.converters.TrackDbConvertor
 import com.myproject.playlistmaker.medialibrary.data.model.TrackDataSource
 import com.myproject.playlistmaker.medialibrary.domain.api.FavoriteTracksRepository
-import com.myproject.playlistmaker.medialibrary.domain.model.Track
+import com.myproject.playlistmaker.search.domain.model.Track
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
@@ -32,5 +32,7 @@ class FavoriteTracksRepositoryImpl(
     private fun convertFromTrackToTrackDataSource(track: Track): TrackDataSource {
         return trackDbConvertor.map(track)
     }
+
+
 
 }

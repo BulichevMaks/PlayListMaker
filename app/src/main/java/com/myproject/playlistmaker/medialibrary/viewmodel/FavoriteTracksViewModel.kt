@@ -8,8 +8,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.myproject.playlistmaker.R
 import com.myproject.playlistmaker.medialibrary.domain.api.FavoriteTracksInteractor
-import com.myproject.playlistmaker.medialibrary.domain.model.Track
 import com.myproject.playlistmaker.medialibrary.ui.FavoriteState
+import com.myproject.playlistmaker.search.domain.model.Track
 import kotlinx.coroutines.launch
 
 class FavoriteTracksViewModel(

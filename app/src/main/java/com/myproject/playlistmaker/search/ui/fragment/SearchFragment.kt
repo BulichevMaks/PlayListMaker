@@ -224,7 +224,7 @@ class SearchFragment : Fragment() {
             progressBar.visibility = View.GONE
             placeholder.visibility = View.GONE
             buttonRefresh.visibility = View.GONE
-            clearHistoryButton.visibility = View.GONE
+            clearHistoryButton.visibility = View.VISIBLE
             youSearched.visibility = View.GONE
             recyclerView.visibility = View.VISIBLE
         }

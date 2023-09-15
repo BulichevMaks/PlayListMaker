@@ -3,7 +3,7 @@ package com.myproject.playlistmaker.player.data.repository
 import com.myproject.playlistmaker.db.room.AppDatabase
 import com.myproject.playlistmaker.player.data.api.TracksSharedPrefStorage
 import com.myproject.playlistmaker.player.domain.api.PlayerRepository
-import com.myproject.playlistmaker.player.domain.model.Track
+import com.myproject.playlistmaker.search.domain.model.Track
 
 
 class PlayerRepositoryImpl(

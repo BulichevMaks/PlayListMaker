@@ -6,14 +6,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.myproject.playlistmaker.R
 import com.myproject.playlistmaker.databinding.FragmentFavoriteTracksBinding
-import com.myproject.playlistmaker.medialibrary.domain.model.Track
 import com.myproject.playlistmaker.medialibrary.ui.FavoriteState
 import com.myproject.playlistmaker.medialibrary.viewmodel.FavoriteTracksViewModel
+import com.myproject.playlistmaker.search.domain.model.Track
 import java.util.ArrayList
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch

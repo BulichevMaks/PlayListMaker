@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="16dp"
+    android:orientation="vertical">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="0dp">
+
+        <ImageView
+            android:id="@+id/playlistImage"
+            style="@style/iconPlayListStyle"
+            tools:srcCompat="@tools:sample/avatars" />
+        <ImageView
+            android:id="@+id/placeholder"
+            style="@style/iconPlayListStyle"
+            android:padding="28dp"
+            android:paddingBottom="28dp"
+            android:src="@drawable/ic_playlist_playsholder" />
+    </androidx.cardview.widget.CardView>
+
+    <TextView
+        android:id="@+id/namePlaylist"
+        style="@style/countTrackTextView"
+        android:paddingTop="4dp"
+        android:text="Best song 2021"
+         />
+
+    <TextView
+        android:id="@+id/count"
+        style="@style/countTrackTextView"
+        android:text="98 треков"
+         />
+</LinearLayout>

@@ -2,12 +2,12 @@ package com.myproject.playlistmaker.medialibrary.data.converters
 
 import com.myproject.playlistmaker.db.room.model.TrackEntity
 import com.myproject.playlistmaker.medialibrary.data.model.TrackDataSource
-import com.myproject.playlistmaker.medialibrary.domain.model.Track
+import com.myproject.playlistmaker.search.domain.model.Track
 
 class TrackDbConvertor {
 
     fun map(track: Track): TrackDataSource {
-         return TrackDataSource(
+        return TrackDataSource(
             id = track.id,
             trackId = track.trackId,
             trackName = track.trackName,
@@ -37,4 +37,5 @@ class TrackDbConvertor {
             country = track.country
         )
     }
+
 }

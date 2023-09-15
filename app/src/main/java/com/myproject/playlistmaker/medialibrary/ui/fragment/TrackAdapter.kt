@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.myproject.playlistmaker.R
-import com.myproject.playlistmaker.medialibrary.domain.model.Track
+import com.myproject.playlistmaker.search.domain.model.Track
 
 
 class TrackAdapter(var tracks: ArrayList<Track>) : RecyclerView.Adapter<TrackViewHolder>() {
