@@ -9,6 +9,7 @@ import com.myproject.playlistmaker.medialibrary.domain.api.PlayListsRepository
 import com.myproject.playlistmaker.medialibrary.domain.model.Playlist
 import com.myproject.playlistmaker.search.domain.model.Track
 import android.content.Context
+import android.util.Log
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
@@ -37,7 +38,7 @@ class PlayListsRepositoryImpl(
         playList.tracks.add(track)
         insertPlaylist(playList)
         appDatabase.playlistDao()
-            .insertPlaylistTrack(playlistTrackConverter.map(track))
+            .insertPlaylistTrack(playlistTrackConverter.map(track, playList.id))
     }
 
 }

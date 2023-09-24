@@ -1,6 +1,7 @@
 package com.myproject.playlistmaker.medialibrary.ui.fragment
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -8,14 +9,18 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.widget.doOnTextChanged
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.internal.ViewUtils.hideKeyboard
 import com.myproject.playlistmaker.R
 import com.myproject.playlistmaker.databinding.FragmentAddNewPlayListBinding
 import com.myproject.playlistmaker.medialibrary.viewmodel.AddNewPlayListViewModel
@@ -34,7 +39,10 @@ class AddNewPlayListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val confirmDialog = MaterialAlertDialogBuilder(requireContext())
+        vm.uriLiveData.observe(viewLifecycleOwner) {
+            imageUri = it
+        }
+        val confirmDialog = MaterialAlertDialogBuilder(requireContext(), R.style.MyAlertDialogTheme)
             .setTitle(requireContext().getString(R.string.complete_creating_of_playlist))
             .setMessage(requireContext().getString(R.string.unsaved_data_will_be_lost))
             .setNeutralButton(requireContext().getString(R.string.cancel)) { _, _ -> }
@@ -62,7 +70,7 @@ class AddNewPlayListFragment : Fragment() {
         val pickMedia1 =
             registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
                 if (uri != null) {
-                    imageUri = vm.saveToStorage(uri, requireContext().applicationContext)
+                    vm.saveToStorage(uri, requireContext().applicationContext)
                     binding.imageContainer.setImageURI(uri)
                     binding.placeholder.visibility = View.GONE
                 }
@@ -72,6 +80,7 @@ class AddNewPlayListFragment : Fragment() {
         binding.imageContainer.setOnClickListener{
             pickMedia1.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
         }
+
         binding.editTextPlaylistTitle.doOnTextChanged { text, _, _, _ ->
             if (text != null) {
                 if (text.isNotEmpty()) {
@@ -100,11 +109,16 @@ class AddNewPlayListFragment : Fragment() {
             }
         }
 
+        binding.editTextPlaylistDescription.doOnTextChanged { text, _, _, _ ->
+
+        }
+
         binding.buttonCreatePlaylist.setOnClickListener {
             vm.insertPlaylist(binding.editTextPlaylistTitle.text.toString(),
                 imageUri,
                 binding.editTextPlaylistDescription.text.toString()
             )
+
             imageUri?.let {
                 vm.saveToStorage(it, requireContext().applicationContext)
             }
@@ -126,7 +140,6 @@ class AddNewPlayListFragment : Fragment() {
     ): View? {
         binding = FragmentAddNewPlayListBinding.inflate(inflater, container, false)
         return binding.root
-
     }
 
     companion object {

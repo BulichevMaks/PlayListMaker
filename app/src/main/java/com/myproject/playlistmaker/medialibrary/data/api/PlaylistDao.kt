@@ -1,4 +1,4 @@
-package com.myproject.playlistmaker.db.room
+package com.myproject.playlistmaker.medialibrary.data.api
 
 import androidx.room.Dao
 import androidx.room.Insert
@@ -11,12 +11,12 @@ import com.myproject.playlistmaker.db.room.model.PlaylistTrackEntity
 interface PlaylistDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertPlaylist(track: PlaylistEntity)
+    suspend fun insertPlaylist(playlist: PlaylistEntity)
 
     @Query("SELECT * FROM playlist_table")
     suspend fun getPlaylists(): List<PlaylistEntity>
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertPlaylistTrack(track: PlaylistTrackEntity)
 
 }

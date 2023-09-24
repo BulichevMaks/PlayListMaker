@@ -1,5 +1,6 @@
 package com.myproject.playlistmaker.player.ui.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -36,6 +37,8 @@ class PlayerViewModel(
     private var _playerStateLiveData = MutableLiveData<Boolean>()
     val playerStateLiveData: LiveData<Boolean> = _playerStateLiveData
 
+    private var _isTrackInPlaylistLiveData = MutableLiveData<Boolean>()
+    val isTrackInPlaylistLiveData: LiveData<Boolean> = _isTrackInPlaylistLiveData
 
     private var _favoriteButtonStateLiveData = MutableLiveData<Boolean>()
     val favoriteButtonStateLiveData: LiveData<Boolean> = _favoriteButtonStateLiveData
@@ -97,16 +100,19 @@ class PlayerViewModel(
 
     }
 
-    fun isInPlaylist(playlist: Playlist, trackId: Long): Boolean {
-        var result = false
+    fun isInPlaylist(playlist: Playlist, trackId: Long) {
+        var isTrackInPlaylist = false
         for(track in playlist.tracks) {
-            if(track.trackId == trackId) result = true
+            if(track.trackId == trackId) {
+                isTrackInPlaylist = true
+            }
         }
-        return result
+        _isTrackInPlaylistLiveData.value = isTrackInPlaylist
     }
 
     fun addToPlaylist(playlist: Playlist, track: Track) {
-
+        Log.d("LOG___________1", "$track")
+        Log.d("LOG___________1", "$playlist")
         viewModelScope.launch {
             playlist.trackCount = playlist.tracks.size + 1
             playListsInteractor.insertPlaylistTrack(playlist, track)

@@ -9,46 +9,38 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:paddingTop="24dp"
         android:gravity="center_horizontal"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:paddingTop="24dp">
 
         <Button
             android:id="@+id/newPlaylist_button"
             style="@style/ButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="46dp"
             android:layout_gravity="center"
-            android:text="@string/new_playlist"
-            />
+            android:layout_marginBottom="46dp"
+            android:text="@string/new_playlist" />
 
         <TextView
             android:id="@+id/placeholder"
             style="@style/ErrorMessageStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAlignment="center"
-            />
+            android:textAlignment="center" />
 
 
     </LinearLayout>
-    <LinearLayout
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal"
-        android:layout_gravity="center_horizontal"
-        >
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="69dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="56dp" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginTop="69dp"
-            android:layout_marginBottom="56dp"
-             />
-    </LinearLayout>
 
 </FrameLayout>

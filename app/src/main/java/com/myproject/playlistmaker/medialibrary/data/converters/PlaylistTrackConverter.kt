@@ -1,14 +1,16 @@
 package com.myproject.playlistmaker.medialibrary.data.converters
 
+import android.util.Log
 import com.myproject.playlistmaker.db.room.model.PlaylistTrackEntity
 import com.myproject.playlistmaker.search.domain.model.Track
 
 class PlaylistTrackConverter {
 
-    fun map(track: Track): PlaylistTrackEntity {
+    fun map(track: Track, id: Int): PlaylistTrackEntity {
         return PlaylistTrackEntity(
-            track.id,
+            id = 0,
             track.trackId,
+            playlistId = id,
             track.trackName,
             track.artistName,
             track.trackTimeMillis,

@@ -2,6 +2,7 @@ package com.myproject.playlistmaker.player.ui.fragment
 
 import android.content.res.Configuration
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -30,6 +31,7 @@ class PlayerFragment : Fragment(), PlayerViewHolder.ClickListener {
     private lateinit var binding: FragmentPlayerBinding
     private lateinit var adapter: PlayerAdapter
     private lateinit var track: Track
+    private var isTrackInPlaylist: Boolean = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -96,6 +98,9 @@ class PlayerFragment : Fragment(), PlayerViewHolder.ClickListener {
         vm.statePlayListsLiveData.onEach { render(it) }
             .launchIn(viewLifecycleOwner.lifecycleScope)
 
+        vm.isTrackInPlaylistLiveData.observe(viewLifecycleOwner) {
+            isTrackInPlaylist = it
+        }
 
         vm.playerTimingLiveData.observe(viewLifecycleOwner) {
             binding.trackTime.text = it
@@ -195,12 +200,10 @@ class PlayerFragment : Fragment(), PlayerViewHolder.ClickListener {
     }
 
     override fun onClick(playlist: Playlist) {
+        vm.isInPlaylist(playlist = playlist, trackId = track.trackId)
+
         if (vm.clickDebounce()) {
-            if (!vm.isInPlaylist(
-                    playlist = playlist,
-                    trackId = track.trackId
-                )
-            ) {
+            if (!isTrackInPlaylist) {
                 vm.addToPlaylist(playlist = playlist, track = track)
                 Toast.makeText(
                     requireContext().applicationContext,

@@ -6,6 +6,8 @@ import androidx.room.TypeConverters
 import com.myproject.playlistmaker.db.room.model.PlaylistEntity
 import com.myproject.playlistmaker.db.room.model.PlaylistTrackEntity
 import com.myproject.playlistmaker.db.room.model.TrackEntity
+import com.myproject.playlistmaker.medialibrary.data.api.PlaylistDao
+import com.myproject.playlistmaker.player.data.api.TrackDao
 
 @Database(version = 1, entities = [TrackEntity::class,
     PlaylistEntity::class, PlaylistTrackEntity::class])
