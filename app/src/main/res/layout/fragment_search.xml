@@ -50,6 +50,7 @@
                 android:paddingTop="@dimen/padding_top_bottom"
                 android:paddingBottom="@dimen/padding_top_bottom"
                 android:singleLine="true"
+                android:textCursorDrawable="@drawable/cursor_color"
                 android:textColor="@color/black" />
 
             <ImageView
@@ -90,7 +91,7 @@
             android:layout_height="44dp"
             android:layout_gravity="center"
             android:layout_marginTop="148dp"
-            android:indeterminateTint="@color/blue"
+            android:indeterminateTint="@color/purple_for_progress_bar"
             android:visibility="gone" />
 
         <androidx.recyclerview.widget.RecyclerView

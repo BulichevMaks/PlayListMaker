@@ -2,7 +2,7 @@ package com.myproject.playlistmaker.player.data
 
 import android.media.MediaPlayer
 import com.myproject.playlistmaker.player.domain.api.PlayerApi
-import com.myproject.playlistmaker.player.domain.model.Track
+import com.myproject.playlistmaker.search.domain.model.Track
 
 class PlayerHandler(private val mediaPlayer: MediaPlayer): PlayerApi {
 

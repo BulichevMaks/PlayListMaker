@@ -1,7 +1,7 @@
 package com.myproject.playlistmaker.player.domain.api
 
-import com.myproject.playlistmaker.player.data.repository.PlayerDataMapper
-import com.myproject.playlistmaker.player.domain.model.Track
+import com.myproject.playlistmaker.search.domain.model.Track
+
 
 interface PlayerInteractor {
     fun getTrack(): Track

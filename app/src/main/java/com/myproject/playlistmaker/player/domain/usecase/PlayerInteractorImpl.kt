@@ -3,7 +3,7 @@ package com.myproject.playlistmaker.player.domain.usecase
 import com.myproject.playlistmaker.player.domain.api.PlayerApi
 import com.myproject.playlistmaker.player.domain.api.PlayerInteractor
 import com.myproject.playlistmaker.player.domain.api.PlayerRepository
-import com.myproject.playlistmaker.player.domain.model.Track
+import com.myproject.playlistmaker.search.domain.model.Track
 import java.text.SimpleDateFormat
 import java.util.Locale
 

@@ -2,7 +2,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <style name="Theme.PlayListMaker_project" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/purple_200</item>
+        <item name="colorPrimary">@color/vp_blue</item>
         <item name="colorPrimaryVariant">@color/black</item>
         <item name="colorOnPrimary">@color/black</item>
         <!-- Secondary brand color. -->
@@ -38,7 +38,7 @@
         <item name="android:maxLines">1</item>
     </style>
     <style name="TrackItem">
-        <item name="android:background">#121212</item>
+        <item name="android:background">@color/black</item>
     </style>
     <style name="Track.Text">
         <item name="android:textSize">11sp</item>
